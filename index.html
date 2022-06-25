@@ -16,32 +16,34 @@
 		<div id="root">
 			<div class="top-section">
 				<div class="center mw-max-width">
-					<div class="header pb2 pt3 f4">Jimmy Zhang</div>
-					<div class="top-section-container pb4">
+					<div class="header pb2-l pb3 pt3 f4-l f5 ph4">Jimmy Zhang</div>
+					<div class="top-section-container pb4-l pb5 ph4">
 						<div class="relative top-text f2 f1-l fw7">
-							<div><span class="deep-blue">Visualize</span> your way to coding success.</div>
+							<div class="w-70 w-100-l"><span class="deep-blue">Visualize</span> your way to coding success.</div>
 							
 						</div>
 						
-						<img class="ml3 center recursion" src="recursion.png" />
+						<img class="dn db-l ml3 center recursion" src="recursion.png" />
 					</div>
 				</div>
 			</div>
 
 			<div class="about-section center mw-max-width">
 				
-				<div class="about-section-container">
-					<img class="profile relative" src="photosq.jpg" />
-					<div class="about-text ml3 mt4">
-						<div class="f2 pb4">Hi! My name is Jimmy.</div>
-						<div class="f4 lh-copy pb3">I'm an ex-LinkedIn software engineer turned computer science tutor.</div>
+				<div class="about-section-container ph4">
+					<div class="profile-container">
+						<img class="profile relative" src="photosq.jpg" />
+					</div>
+					<div class="about-text ml3 mt4-l mt1">
+						<div class="f2-l f3 pb3 fw6">Hi! My name is Jimmy.</div>
+						<div class="f5 f4-l lh-copy pb3">I'm an ex-LinkedIn software engineer turned computer science tutor.</div>
 					
 
-						<div class="f4 lh-copy pb3">
+						<div class="f5 f4-l lh-copy pb3">
 							I create visuals and animations to teach important concepts. My students then work directly with those creations to deepen your understanding.
 						</div>
 
-						<div class="f4 lh-copy pb3">
+						<div class="f5 f4-l lh-copy pb3">
 							If you like what you just read, click below to a schedule a time to:
 						</div>
 
@@ -60,11 +62,6 @@
 <style type="text/css">
 .mw-max-width {
     max-width: 76rem;
-}
-
-.center {
-    margin-right: auto;
-	margin-left: auto;
 }
 
 
@@ -103,11 +100,7 @@ body {
 	color: #fff3f3;
 	font-style: normal;
 	line-height: 1.4;
-	display: flex;
-	align-items: center;
-	width: 90%;
-	margin: auto 0;
-	top: -20px;
+	display: flex;	
 }
 
 .about-section-container {
@@ -119,7 +112,39 @@ img.profile {
 	width: 450px;
 	top: -50px;
 	border-radius: 10px;
-	/* margin: auto; */
+}
+
+@media screen and (max-width: 60em) {
+	.top-section-container {
+    	display: block;
+	}
+
+	.top-text {
+		justify-content: center;
+		text-align: center;
+	}
+
+	.about-section-container {
+		display: block;
+	}
+
+	img.profile {
+		width: 225px;
+		top: -30px;
+	}
+
+	.profile-container {
+		display: flex;
+		justify-content: center;
+	}
+}
+
+@media screen and (min-width: 60em) {
+	.top-text {
+		align-items: center;
+		top: -20px;
+		width: 90%;
+	}
 }
 
 .about-text {
