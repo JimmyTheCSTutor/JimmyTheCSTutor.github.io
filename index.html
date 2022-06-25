@@ -15,18 +15,21 @@
 	<body>
 		<div id="root">
 			<div class="top-section">
-				<div class="header pb2 pt4 f4">Jimmy Zhang</div>
-				<div class="top-section-container pb4">
-					<div class="relative top-text f2 f1-l fw7">
-						<div>Visualize your way to coding success.</div>
+				<div class="center mw-max-width">
+					<div class="header pb2 pt4 f4">Jimmy Zhang</div>
+					<div class="top-section-container pb4">
+						<div class="relative top-text f2 f1-l fw7">
+							<div>Visualize your way to coding success.</div>
+							
+						</div>
 						
+						<img class="ml3 recursion" src="recursion1.png" />
 					</div>
-					
-					<img class="ml3 recursion" src="recursion1.png" />
 				</div>
 			</div>
 
-			<div class="about-section">
+			<div class="about-section center mw-max-width">
+				
 				<div class="about-section-container">
 					<img class="profile relative" src="photosq.jpg" />
 					<div class="about-text ml3 mt4">
@@ -55,6 +58,16 @@
 	</body>	
 </html>
 <style type="text/css">
+.mw-max-width {
+    max-width: 76rem;
+}
+
+.center {
+    margin-right: auto;
+	margin-left: auto;
+}
+
+
 body {
 	margin: 0px;
 }
@@ -68,12 +81,10 @@ body {
 .top-section {
 	background-color: #F08E80;
 	opacity: .875;
-	padding-left: 6rem;
 }
 
 .top-section-container {
 	display:  grid;
-	/* grid-template-columns: 1fr 1fr; */
 	grid-template-columns: .925fr 1.075fr;
 }
 
@@ -84,7 +95,6 @@ body {
 
 
 .top-text {
-	/* text-align: center; */
 	font-family: 'Playfair Display', serif;
 	color: #fff3f3;
 	font-style: normal;
@@ -99,7 +109,6 @@ body {
 .about-section-container {
 	display: grid;
 	grid-template-columns: .925fr 1.075fr;
-	padding-left: 6rem;	
 }
 
 img.profile {
