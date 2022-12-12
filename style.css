@@ -103,3 +103,7 @@ img.profile {
 .bw2 {
     border-width: .25rem;
 }
+
+.line-highlight {
+	background: linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0))
+}

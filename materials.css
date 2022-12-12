@@ -1,0 +1,68 @@
+.line-highlight {
+	background: #20a31170;
+}
+
+.suspended {
+    animation: blinkingBackground 2s infinite;
+}
+
+.container {
+    width: 100%;
+    margin-left: 30px;
+    margin-top: 30px;
+    display: flex;
+}
+
+.frame-container {
+    width: 70%;
+}
+
+.frame {
+    width: 50%
+}
+
+.nested-frame {
+    margin-left: 10px;
+}
+
+path.node-fill.active {
+    stroke: green;
+}
+
+
+.frame > pre {
+    background: #e8e8e8;
+    border-radius: 6px;
+    border: 4px solid #000000aa;
+    overflow-x: hidden;
+}
+
+
+@keyframes append-animate {
+	from {
+		transform: scale(0);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;	
+	}
+}
+
+.frame {
+	animation: append-animate .3s linear;
+}
+
+@keyframes blinkingBackground{
+    0%		{ background-color: #20a31170 }
+    50%		{ background-color: #20a31125 } 
+    100%	 { background-color: #20a31170};
+}
+
+/* #output svg {
+    /* position: absolute; */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+/* } */ */
