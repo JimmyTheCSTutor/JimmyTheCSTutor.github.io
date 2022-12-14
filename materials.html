@@ -13,31 +13,15 @@
 	<link rel="stylesheet" href="prism.css">
 	<script src="prism.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.7.0/d3.min.js"></script>
 
 	<link rel="stylesheet" href="materials.css" />
 </head>
 
 <body>
-	<div class="container">
-		<div class="frame-container">
-			<button onClick="nextStep()">Next Step</button>
-			<!-- <button onClick="newFrame()">New Frame</button>
-			<button onClick="nextLine()">Next Line</button>
-			<button onClick="popFrame()">Pop Frame</button> -->
-			<!-- <div id="frame-1-container" class="frame line-numbers">
-				<pre id="frame-1"><code class="language-python">def dfs(root):
-	if not root:
-		return
-
-	print(root.value)
-	dfs(root.left)
-	dfs(root.right)</code></pre>
-			</div> -->
-		</div>
-
-		<div id="output">
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="170pt"
+	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%"
 				height="260pt" id="svg_output" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden; ">
+				
 				<defs>
 					<pattern id="rough-5641711627558583" x="0" y="0" width="1" height="1" viewBox="0 0 14 28"
 						patternUnits="objectBoundingBox">
@@ -100,8 +84,8 @@
 							style="stroke: rgb(0, 0, 0); stroke-width: 0.5; fill: none;"></path>
 					</pattern>
 				</defs>
-				<g id="viewport-20221208201140810" class="svg-pan-zoom_viewport">
-					<g id="graph0" class="graph" transform="scale(1.2 1.2) rotate(0) translate(5 256)">
+					<svg x="70%">
+					<g id="graph0" class="graph" transform="translate(0, 310) scale(1.2 1.2) rotate(0)">
 						<title>G</title>
 						<!-- 5 -->
 						<g id="node1" class="node">
@@ -300,18 +284,23 @@
 							</g>
 						</g>
 					</g>
-				</g>
+					</svg>
 
-			</svg>
+		</svg>
+	<div class="container">
+		<div class="frame-container">
+			<button onClick="nextStep()">Next Step</button>
 		</div>
 	</div>
 </body>
 
 <script>
-	let lastActive;
 	let active = 0; // reference to the currently active frame
 	let counter = 1;
 	let activeLine = 2;
+
+	let stack = [];
+	let visited = [];
 
 	const wrapFunction = function(fn, context, params) {
 		return function() { 
@@ -331,15 +320,15 @@
 		// Null (Node 10.left)
 		wrapFunction(newFrame, this, [null]),
 		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, [10]),
+		wrapFunction(popFrame, this, []),
 		// Back to Node 10
 		wrapFunction(highlightLine, this, [7]),
 		// Null (Node 10.right)
-		wrapFunction(newFrame, this, [null]),
+		wrapFunction(newFrame, this, [null, true]),
 		wrapFunction(highlightLine, this, [3]),
 		wrapFunction(popFrame, this, [10]),
 		// Back to Node 10
-		wrapFunction(popFrame, this, [5]),
+		wrapFunction(popFrame, this, []),
 		// Node 5
 		wrapFunction(highlightLine, this, [7]),
 		// Node 12
@@ -357,22 +346,22 @@
 		// Null (Node.9 left)
 		wrapFunction(newFrame, this, [null]),
 		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, [9]),
+		wrapFunction(popFrame, this, []),
 		// Back to 9
 		wrapFunction(highlightLine, this, [7]),
 		// Null (node.9 right)
-		wrapFunction(newFrame, this, [null]),
+		wrapFunction(newFrame, this, [null, true]),
 		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, [9]),
+		wrapFunction(popFrame, this, []),
 		// Back to 9
-		wrapFunction(popFrame, this, [6]),
+		wrapFunction(popFrame, this, []),
 		// Null (node.6 right)
 		wrapFunction(highlightLine, this, [7]),
-		wrapFunction(newFrame, this, [null]),
+		wrapFunction(newFrame, this, [null, true]),
 		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, [6]),
+		wrapFunction(popFrame, this, []),
 		// Back to 12
-		wrapFunction(popFrame, this, [12]),
+		wrapFunction(popFrame, this, []),
 		wrapFunction(highlightLine, this, [7]),
 		// 8
 		wrapFunction(newFrame, this, [8]),
@@ -380,16 +369,16 @@
 		wrapFunction(highlightLine, this, [6]),
 		wrapFunction(newFrame, this, [null]),
 		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, [8]),
+		wrapFunction(popFrame, this, []),
 		// Back to 9
 		wrapFunction(highlightLine, this, [7]),
 		// Null (node.9 right)
-		wrapFunction(newFrame, this, [null]),
+		wrapFunction(newFrame, this, [null, true]),
 		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, [8]),
+		wrapFunction(popFrame, this, []),
 		// Back to 12
-		wrapFunction(popFrame, this, [12]),
-		wrapFunction(popFrame, this, [5]),
+		wrapFunction(popFrame, this, []),
+		wrapFunction(popFrame, this, []),
 
 	]
 
@@ -398,19 +387,22 @@
 	}
 
 	function connect(frameNum, nodeNum) {
-		const root = $(`#frame-${frameNum}`).find(".function").next()[0];
-		const {x: startX, y: startY} = root.getBoundingClientRect();
+		console.log("Connecting: ", {frameNum, nodeNum});
+		const root = $(`#frame-${frameNum}`).find(".function").next().next()[0];
+		const {left: startX, top: startY} = root.getBoundingClientRect();
 
 		const node = findNode(nodeNum)[0];
 		const {x: nodeX, y: nodeY} = node.getBoundingClientRect();
 
-		console.log({startX: startX, startY, nodeX, nodeY});
-
-		const connector = $(`<svg width="500" height="500"><line x1=${startX} y1=${startY} x2=${nodeX} y2=${nodeY} stroke="black"/></svg>`);
-
-		const container = $('.frame-container');
-		container.append(connector);
-
+		var circle = d3.select("#svg_output").append("line")
+			.attr("class", `connector-${nodeNum}`)
+			.attr("x1", startX)
+			.attr("y1", startY)
+			.attr("x2", nodeX)
+			.attr("y2", nodeY)
+    		.attr("stroke", "#cacdcf")
+    		.attr("stroke-width", 2)
+    		.attr("stroke-dasharray", [10, 3]);
 	}
 
 	// function init() {
@@ -421,39 +413,60 @@
 	// 	// findNode(5).find('path.node-fill').css({stroke: "green"});
 	// }
 
-	function popFrame(next) {
+	// If I maintain the stack correctly, I don't need current node. Cuz I can just get that from the top of the stack.
+	function popFrame() {
 		$(`#frame-${active}-container`).remove();
 		active--;
 		counter--;
 
+		// remove connector line for the recently departed frame.
+		const item = stack.pop();
+		if (item) {
+			$(`.connector-${item}`).remove();
+		}
+
 		// remove suspended class of the previous frame
+		// refactor: remove notion of active? and only use the stack.
 		$(`#frame-${active}-container`).find('.line-highlight').removeClass("suspended")
 
 		// clear all node prev fill.
 		$("path.node-fill").css({stroke: "none"});
 		
+		const nextNode = stack[stack.length - 1];
 		// set current node active fill.	
-		findNode(next).find("path.node-fill").css({stroke: "green"});
+		findNode(nextNode).find("path.node-fill").css({stroke: "green"});
 	}
 
 	function findNode(nodeValue) {
 		return $(`.node > title:contains(${nodeValue})`).next();
 	}
 
-	function newFrame(next) {
-		// suspend highlighted-line of previous frame.
-		const id = `#frame-${active}`;
-		const pre = $(id);
-		pre.find('.line-highlight').addClass('suspended');
+	function newFrame(newNode, right=false) {
+
+		let prevNode = null;
+		if (stack.length > 0) {
+			prevNode = stack[stack.length - 1];
+			// // draw line connecting "root" and node in graph for the previous node.
+			// if (prevNode != null) {
+			// 	connect(active, prevNode);
+			// }
+		}
+		// console.log({prevNode, newNode, stack, right});
+		// const id = `#frame-${active}`;
+		// const pre = $(id);
+		// pre.find('.line-highlight').addClass('suspended');
 
 		// clear all prev node active fill
 		$("path.node-fill").css({stroke: "none"});
 		// set current node active fill.
-		if (next) {
-			findNode(next).find("path.node-fill").css({stroke: "green"});
+		if (newNode) {
+			findNode(newNode).find("path.node-fill").css({stroke: "green"});
 		}
-		
+	
+		// append stack frame for newNode.
 		const container = $('.frame-container');
+		let nodeId = newNode ? newNode : `${prevNode}-${right ? "right" : "left"}`;
+
 		const elem = $(`<div id="frame-${counter}-container" class="frame line-numbers"><pre data-line="2" id="frame-${counter}"><code class="language-python">def dfs(root):
   if not root:
     return
@@ -462,10 +475,10 @@
   dfs(root.left)
   dfs(root.right)
 </code></pre></div>`);
-		let marginTop = active > 0 ? -80 : 0;
+		// let marginTop = active > 0 ? -80 : 0;
 		elem.css({
-			marginLeft: `${(counter - 1) * 160}px`,
-			marginTop
+			left: `${(counter - 1) * 160 + 30}px`,
+			top: `${(counter - 1) * 80}px`
 		});
 
 		container.append(elem);
@@ -476,6 +489,8 @@
 		counter++;
 		activeLine = 2;
 		active++;
+
+		stack.push(newNode);
 	}
 
 	function nextLine() {
@@ -496,7 +511,9 @@
 	}
 
 	$(document).ready(function () {
-		// init();
+
+		
+
 	});
 
 </script>
