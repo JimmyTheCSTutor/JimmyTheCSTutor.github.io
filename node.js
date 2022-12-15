@@ -1,7 +1,10 @@
 // Encapsulates DOM information for both the code frame and the node in the graph for a given node.
+const lineConstructor = d3.line().x(d => d[0]).y(d => d[1]);
 class Node {
     static ACTIVE = 0;
     static INACTIVE = 1;
+    static LEFT = "L";
+    static RIGHT = "R";
     constructor(nodeId) {
         this.nodeId = nodeId;
         // possibly consolidate line highlight information into this class.
@@ -36,47 +39,90 @@ class Node {
     }
 
     getGraphNodeFill() {
-        return this.getGraphNode().find('path.node-fill');
+        return this.getGraphNode().find('path');
+    }
+
+    getConnector() {
+        return $(`#connector-${this.nodeId}`);
+    }
+
+    getNull() {
+        return $(`text#${this.nodeId}`);
     }
 
     // Manipulate DOM according to state.
-    markGraphNode(state) {
-        let stroke = state === Node.ACTIVE ? "green" : "none";
-        this.getGraphNodeFill().css({
-            stroke
-        });
+    activate() {
+        const frame = this.getFrame();
+        if (this.valid()) {
+            this.markGraphNode(Node.ACTIVE);
+        } else {
+            this.getNull().removeClass("hidden");
+        }
+        this.getConnector().addClass('active');
+        frame.find('pre').removeClass("inactive").addClass('active');
+        frame.find('.line-highlight').removeClass('inactive suspended');
     }
 
-    connect() {
-        if (!this.isNull()) {
-            const root = this.getFrame().find(".function").next().next()[0];
-            // const root = this.getFrame()[0];
-            const {
-                left: startX,
-                top: startY
-            } = root.getBoundingClientRect();
-
-            const graphNode = this.getGraphNode().find("text")[0];
-            const {
-                x: nodeX,
-                y: nodeY
-            } = graphNode.getBoundingClientRect();
-
-            d3.select("#svg_output").append("line")
-                .attr("id", `connector-${this.nodeId}`)
-                .attr("class", "connector")
-                .attr("x1", startX)
-                .attr("y1", startY)
-                .attr("x2", nodeX)
-                .attr("y2", nodeY);
+    deactivate() {
+        const frame = this.getFrame();
+        frame.find('pre').addClass('inactive');
+        frame.find('.line-highlight').addClass('inactive suspended');
+        this.getConnector().removeClass('active');
+        if (this.valid()) {
+            this.markGraphNode(Node.INACTIVE);
         }
     }
 
-    remove() {
-        this.getFrame().remove();
-        if (!this.isNull()) {
-            $(`#connector-${this.nodeId}`).remove();
-            // toRemove.getFrame().find('.line-highlight').removeClass("suspended")
+    markGraphNode(state) {
+        if (state === Node.ACTIVE) {
+            this.getGraphNodeFill().addClass("active");
+        } else {
+            this.getGraphNodeFill().removeClass("active");
+        }
+    }
+
+    connect() {
+        // const root = this.getFrame().find(".function").next().next()[0];
+        const root = this.getFrame()[0];
+        const {
+            right: startX,
+            top,
+            height
+        } = root.getBoundingClientRect();
+
+        const startY = top + (height * .25);
+
+        const graphNode = this.valid() ? this.getGraphNode().find("text")[0] : this.getNull()[0];
+        const {
+            x: nodeX,
+            y: nodeY
+        } = graphNode.getBoundingClientRect();
+
+        const buffer = 10;
+
+        const midX = startX + (nodeX - startX) / 2;
+        const points = [
+            [startX, startY],
+            [midX, startY],
+            [midX, nodeY + buffer],
+            [nodeX, nodeY + buffer]
+        ]
+
+        d3.select("#svg_output").append("path")
+            .attr("id", `connector-${this.nodeId}`)
+            .attr("class", "connector active")
+            .datum(points)
+            .attr("d", lineConstructor);
+    }
+
+    // completely removes this frame from the DOM
+    // Different than deactivate, is called when another node is placed on top of this frame.
+    destroy() {
+        const frame = this.getFrame();
+        frame.addClass("zoom");
+        $(`#connector-${this.nodeId}`).remove();
+        if (this.isNull()) {
+            this.getNull().addClass("hidden");
         }
         this.markGraphNode(this.INACTIVE);
     }
@@ -93,7 +139,7 @@ class Node {
 </code></pre></div>`);
 
         elem.css({
-            left: `${(counter) * 160 + 30}px`,
+            left: `${(counter) * 140 + 30}px`,
             top: `${(counter) * 80}px`
         });
         return elem;

@@ -1,16 +1,19 @@
 .line-highlight {
-	background: #20a31170;
+	background: #429c38aa;
+}
+
+.line-highlight.inactive {
+    background: #dfdfdfa8;
 }
 
 .suspended {
-    animation: blinkingBackground 2s infinite;
+    animation: blinkingBackground 3s infinite;
 }
 
 .container {
     width: 100%;
     margin-left: 30px;
     margin-top: 30px;
-    /* display: flex; */
 }
 
 .frame-container {
@@ -18,57 +21,33 @@
 }
 
 .frame {
-    width: 30%;
+    width: 25%;
     position: absolute;
-    z-index: -1;
+    /* z-index: -1; */
 }
 
 .nested-frame {
     margin-left: 10px;
 }
 
-path.node-fill.active {
-    stroke: green;
+
+path.node-fill {
+    stroke: none;
+    fill: none;
+    stroke-width: .5;
 }
 
-
-.frame > pre {
-    background: #e8e8e8;
-    border-radius: 6px;
-    border: 4px solid #000000aa;
-    overflow-x: hidden;
+path.node-outline {
+    stroke: black;
+    stroke-width: 1;
+    fill: none;
 }
 
-
-@keyframes append-animate {
-	from {
-		transform: scale(0);
-		opacity: 0;
-	}
-	to {
-		transform: scale(1);
-		opacity: 1;	
-	}
-}
-
-.frame {
-	animation: append-animate .3s linear;
-}
-
-@keyframes blinkingBackground{
-    0%		{ background-color: #20a31170 }
-    50%		{ background-color: #20a31125 } 
-    100%	 { background-color: #20a31170};
-}
-
-#svg_output {
-    z-index: 2;
-}
-
-.connector {
+path.connector {
+    fill: none;
     stroke: #cacdcf;
-    stroke-width: 2;
-    stroke-dasharray: 10, 3;
+    stroke-width: 1;
+    stroke-dasharray: 10, 5;
     stroke-dashoffset: 1000;
     animation: dash .5s linear forwards;
     z-index: -1;
@@ -79,3 +58,83 @@ path.node-fill.active {
         stroke-dashoffset: 0;
       }
   }
+
+/* Should be the last rule so it overrides */
+path.active {
+    stroke: #429c38aa;
+}
+
+.frame > pre {
+    background: #fffffe;
+    border-radius: 10px;
+    border: 2px solid #429c38aa;
+    animation: append-animate .3s linear;
+    overflow-x: hidden;
+    font-size: 14px;
+}
+
+.frame > pre.inactive {
+    border: 2px solid #dfdfdfa8;
+}
+
+
+@keyframes append-animate {
+	from {
+		transform: scale(0);
+        border: 2px solid #429c38aa;
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+        border: 2px solid #429c38aa;
+	}
+}
+
+@keyframes blinkingBackground{
+    0%		{ background-color: #dfdfdfa8}
+    50%		{ background-color: #dfdfdf00 } 
+    100%	 { background-color: #dfdfdfa8};
+}
+
+#svg_output {
+    z-index: 2;
+    /* margin-top: 40px; */
+}
+
+.frame.zoom {
+  animation: zoom forwards 0.7s ease-out 1;
+}
+
+text.null {
+    /* visibility: visible; */
+    fill: #429c38aa;
+}
+
+text.null.hidden {
+    fill: black;
+    /* visibility: hidden; */
+}
+
+@keyframes zoom { 
+    0% {
+      transform: scale(1);
+      /* width: 250px; */
+      /* min-width: 250px; */
+      opacity: 1;
+      /* transform-origin: 125px 125px; */
+    }
+    50% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    100% {
+      width: 0;
+      min-width: 0;
+      transform: scale(0);
+      opacity: 0;
+      padding: 0;
+      margin: 0;
+    }
+  }
+
