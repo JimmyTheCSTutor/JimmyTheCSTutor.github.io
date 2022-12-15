@@ -301,16 +301,15 @@
 	</svg>
 	<div class="container">
 		<div class="frame-container">
+			<button onClick="prevStep()">Prev Step</button>
 			<button onClick="nextStep()">Next Step</button>
 		</div>
 	</div>
 </body>
 
 <script>
-	let activeLine = 2;
-
+	let stepIdx = 0;
 	let stack = [];
-	let visited = [];
 
 	const wrapFunction = function (fn, context, params) {
 		return function () {
@@ -320,92 +319,101 @@
 
 	const steps = [
 		// Node 5
-		wrapFunction(newFrame, this, [5]),
-		wrapFunction(highlightLine, this, [5]),
-		wrapFunction(highlightLine, this, [6]),
+		{ forward: wrapFunction(newFrame, this, [5]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 10
-		wrapFunction(newFrame, this, [10]),
-		wrapFunction(highlightLine, this, [5]),
-		wrapFunction(highlightLine, this, [6]),
+		{ forward: wrapFunction(newFrame, this, [10]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (Node 10.left)
-		wrapFunction(newFrame, this, [null]),
-		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, []),
+		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.LEFT, true]) },
 		// Back to Node 10
-		wrapFunction(highlightLine, this, [7]),
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (Node 10.right)
-		wrapFunction(newFrame, this, [null, Node.RIGHT]),
-		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, [10]),
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.RIGHT, true]) },
 		// Back to Node 10
-		wrapFunction(popFrame, this, []),
-		// Node 5
-		wrapFunction(highlightLine, this, [7]),
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [10, true]) },
+		// Back to Node 5
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 12
-		wrapFunction(newFrame, this, [12]),
-		wrapFunction(highlightLine, this, [5]),
-		wrapFunction(highlightLine, this, [6]),
+		{ forward: wrapFunction(newFrame, this, [12]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 6
-		wrapFunction(newFrame, this, [6]),
-		wrapFunction(highlightLine, this, [5]),
-		wrapFunction(highlightLine, this, [6]),
+		{ forward: wrapFunction(newFrame, this, [6]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 9
-		wrapFunction(newFrame, this, [9]),
-		wrapFunction(highlightLine, this, [5]),
-		wrapFunction(highlightLine, this, [6]),
+		{ forward: wrapFunction(newFrame, this, [9]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (Node.9 left)
-		wrapFunction(newFrame, this, [null]),
-		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, []),
+		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 9
-		wrapFunction(highlightLine, this, [7]),
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.LEFT, true]) },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.9 right)
-		wrapFunction(newFrame, this, [null, Node.RIGHT]),
-		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, []),
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 9
-		wrapFunction(popFrame, this, []),
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.RIGHT, true]) },
+		// Back to 6
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [9, true]) },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.6 right)
-		wrapFunction(highlightLine, this, [7]),
-		wrapFunction(newFrame, this, [null, Node.RIGHT]),
-		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, []),
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		// Back to 6
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.RIGHT, true]) },
 		// Back to 12
-		wrapFunction(popFrame, this, []),
-		wrapFunction(highlightLine, this, [7]),
-		// 8
-		wrapFunction(newFrame, this, [8]),
-		wrapFunction(highlightLine, this, [5]),
-		wrapFunction(highlightLine, this, [6]),
-		wrapFunction(newFrame, this, [null]),
-		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, []),
-		// Back to 9
-		wrapFunction(highlightLine, this, [7]),
-		// Null (node.9 right)
-		wrapFunction(newFrame, this, [null, Node.RIGHT]),
-		wrapFunction(highlightLine, this, [3]),
-		wrapFunction(popFrame, this, []),
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [6, true]) },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		// Node 8
+		{ forward: wrapFunction(newFrame, this, [8]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		// Null (node.8 left)
+		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.LEFT, true]) },
+		// Back to 8
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		// Null (node.8 right)
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
+		// Back to 8
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.RIGHT, true]) },
 		// Back to 12
-		wrapFunction(popFrame, this, []),
-		wrapFunction(popFrame, this, []),
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [8, true]) },
+		// Back to 5
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [12, true]) },
+		// Finished.
+		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [5, true]) },
 	]
 
 	function nextStep() {
-		(steps.shift())();
+		const { forward } = steps[stepIdx];
+		forward();
+		stepIdx++;
 	}
-
 
 	function popFrame() {
 		const toRemove = stack.pop();
 		toRemove.destroy();
 
 		const nextNode = stack[stack.length - 1];
-		nextNode.activate();
-		// nextNode.markGraphNode(Node.ACTIVE);
+		if (nextNode) {
+			nextNode.activate();
+		}
 	}
 
-	function newFrame(newNode, direction = Node.LEFT) {
+	function newFrame(newNode, restore) {
 
 		let prevNode;
 		if (stack.length > 0) {
@@ -414,11 +422,17 @@
 		}
 
 		// IMPLICIT: if newNode is null, then prevNode will be non-null
-		let nodeId = newNode ? newNode : `${prevNode}-${direction}`;
+		let nodeId = newNode === Node.LEFT || newNode === Node.RIGHT ? `${prevNode}-${newNode}` : newNode;
 		const n = new Node(nodeId);
 
 		// set current node active fill.
 		n.activate();
+
+		// if restoring this frame because we hit previous step, set the current line number
+		// to the last line of the frame before creating it.
+		if (restore) {
+			n.restore();
+		}
 
 		// append stack frame for newNode.
 		const elem = n.createFrame(stack.length);
@@ -429,7 +443,6 @@
 		Prism.highlightElement($(`#frame-${nodeId} > code`)[0]);
 		Prism.plugins.lineHighlight.highlightLines($(`#frame-${nodeId}`)[0])();
 
-		activeLine = 2;
 		stack.push(n);
 
 		// HACK: annotation node connection until after the frame animation completes
@@ -439,12 +452,19 @@
 		}, 400);
 	}
 
-	function nextLine() {
-		activeLine++;
-		highlightLine(activeLine);
+	function prevLine() {
+		const curr = stack[stack.length - 1];
+		curr.retreat();
+		highlightLine(curr.getCurrentLineNumber());
+		curr.advance();
 	}
 
-	// TODO: have each node manage its own line number.
+	function nextLine() {
+		const curr = stack[stack.length - 1];
+		highlightLine(curr.getCurrentLineNumber());
+		curr.advance();
+	}
+
 	function highlightLine(lineNum) {
 
 		const id = `#frame-${stack[stack.length - 1]}`;
@@ -458,10 +478,14 @@
 		func();
 	}
 
+	function prevStep() {
+		stepIdx--;
+		const { undo } = steps[stepIdx];
+		undo();
+	}
+
 	$(document).ready(function () {
 		nextStep();
-
-
 	});
 
 </script>

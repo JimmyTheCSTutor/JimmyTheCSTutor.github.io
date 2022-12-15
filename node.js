@@ -7,9 +7,29 @@ class Node {
     static RIGHT = "R";
     constructor(nodeId) {
         this.nodeId = nodeId;
-        // possibly consolidate line highlight information into this class.
-        this.lines = [2, 5, 6, 7];
-        this.lineIdx = 0;
+        this.lineIdx = 0; // Each frame already starts at line #2.
+        if (typeof nodeId === "string") {
+            this.lines = [2, 3];
+        } else {
+            this.lines = [2, 5, 6, 7];
+        }
+    }
+
+    getCurrentLineNumber() {
+        return this.lines[this.lineIdx];
+    }
+
+    advance() {
+        this.lineIdx++;
+    }
+
+    restore() {
+        this.lineIdx = this.lines.length - 1;
+    }
+
+    retreat() {
+        this.lineIdx--;
+        this.lineIdx--;
     }
 
     valid() {
@@ -112,7 +132,7 @@ class Node {
             .attr("id", `connector-${this.nodeId}`)
             .attr("class", "connector active")
             .datum(points)
-            .attr("d", lineConstructor);
+            .attr("d", lineConstructor)
     }
 
     // completely removes this frame from the DOM
@@ -125,11 +145,12 @@ class Node {
             this.getNull().addClass("hidden");
         }
         this.markGraphNode(this.INACTIVE);
+        frame.remove();
     }
 
     // Insert code frame for this node.
     createFrame(counter) {
-        const elem = $(`<div id="frame-${this.nodeId}-container" class="frame line-numbers"><pre data-line="2" id="frame-${this.nodeId}"><code class="language-python">def dfs(root):
+        const elem = $(`<div id="frame-${this.nodeId}-container" class="frame line-numbers"><pre data-line=${this.getCurrentLineNumber()} id="frame-${this.nodeId}"><code class="language-python">def dfs(root):
   if not root:
     return
 
@@ -142,6 +163,7 @@ class Node {
             left: `${(counter) * 140 + 30}px`,
             top: `${(counter) * 80}px`
         });
+        this.advance(); // lineIdx always points to the NEXT line of code to be executed.
         return elem;
     }
 }
