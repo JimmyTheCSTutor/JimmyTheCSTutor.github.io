@@ -1,179 +1,195 @@
 .line-highlight {
-	background: #429c38aa;
+  background: #429c38aa;
 }
 
 .line-highlight.inactive {
-    background: #dfdfdfa8;
+  background: #dfdfdfa8;
 }
 
 .suspended {
-    animation: blinkingBackground 3s infinite;
+  animation: blinkingBackground 3s infinite;
 }
 
 .container {
-    width: 100%;
-    margin-left: 30px;
-    margin-top: 30px;
+  width: 100%;
+  margin-left: 30px;
+  margin-top: 30px;
 }
 
 .frame-container {
-    width: 70%;
+  width: 70%;
 }
 
 .frame {
-    width: 25%;
-    position: absolute;
-    /* z-index: -1; */
+  width: 20%;
+  position: absolute;
 }
 
 .nested-frame {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
-
 path.node-fill {
-    stroke: none;
-    fill: none;
-    stroke-width: .5;
+  stroke: none;
+  fill: none;
+  stroke-width: .5;
 }
 
 path.node-outline {
-    stroke: black;
-    stroke-width: 1;
-    fill: none;
+  stroke: black;
+  stroke-width: 1;
+  fill: none;
 }
 
 path.connector {
-    fill: none;
-    stroke: #cacdcf;
-    stroke-width: 1;
-    stroke-dasharray: 10, 5;
-    stroke-dashoffset: 1000;
-    animation: dash .5s linear forwards;
-    z-index: -1;
+  fill: none;
+  stroke: #cacdcf;
+  stroke-width: 1;
+  stroke-dasharray: 10,3;
+  stroke-dashoffset: 500;
+  animation: dash .3s linear forwards;
+  z-index: -1;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
   }
-  
-  @keyframes dash {
-    to {
-        stroke-dashoffset: 0;
-      }
-  }
+}
 
 /* Should be the last rule so it overrides */
 path.active {
-    stroke: #429c38aa;
+  stroke: #429c38aa;
 }
 
-.frame > pre {
-    background: #fffffe;
-    border-radius: 10px;
-    border: 2px solid #429c38aa;
-    animation: append-animate .3s linear;
-    overflow-x: hidden;
-    font-size: 14px;
+path.visited {
+  stroke: #00000055;
 }
 
-.frame > pre.inactive {
-    border: 2px solid #dfdfdfa8;
+
+.frame>pre {
+  background: #fffffe;
+  border-radius: 10px;
+  border: 2px solid #dfdfdfa8;
+  animation: append-animate .3s linear;
+  overflow-x: hidden;
+  font-size: 14px;
+  padding-bottom: 0;
+}
+
+.frame>pre.active {
+  border: 2px solid #429c38aa;
+}
+
+.frame {
+  border: 2px solid #429c38aa;
+  border-radius: 10px
 }
 
 
 @keyframes append-animate {
-	from {
-		transform: scale(0);
-        border: 2px solid #429c38aa;
-		opacity: 0;
-	}
-	to {
-		transform: scale(1);
-		opacity: 1;
-        border: 2px solid #429c38aa;
-	}
+  from {
+    transform: scale(0);
+    border: 2px solid #429c38aa;
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+    border: 2px solid #429c38aa;
+  }
 }
 
-@keyframes blinkingBackground{
-    0%		{ background-color: #dfdfdfa8}
-    50%		{ background-color: #dfdfdf00 } 
-    100%	 { background-color: #dfdfdfa8};
+@keyframes blinkingBackground {
+  0% {
+    background-color: #dfdfdfa8
+  }
+
+  50% {
+    background-color: #dfdfdf00
+  }
+
+  100% {
+    background-color: #dfdfdfa8
+  }
+
+  ;
 }
 
 #svg_output {
-    z-index: 2;
-    /* margin-top: 40px; */
+  z-index: 2;
+  /* margin-top: 40px; */
 }
 
-.frame.zoom {
-  animation: zoom forwards 0.7s ease-out 1;
+.frame {
+
 }
 
-text.null {
-    /* visibility: visible; */
-    fill: #429c38aa;
+
+text.null.active {
+  fill: #429c38aa;
 }
 
-text.null.hidden {
-    fill: #cacdcf;
-    /* visibility: hidden; */
+text.visited,
+text.null.visited {
+  fill: #00000055;
 }
 
-@keyframes zoom { 
-    0% {
-      transform: scale(1);
-      /* width: 250px; */
-      /* min-width: 250px; */
-      opacity: 1;
-      /* transform-origin: 125px 125px; */
-    }
-    50% {
-      transform: scale(0);
-      opacity: 0;
-    }
-    100% {
-      width: 0;
-      min-width: 0;
-      transform: scale(0);
-      opacity: 0;
-      padding: 0;
-      margin: 0;
-    }
-  }
 
+.slidecontainer {
+  width: 100%;
+  /* Width of the outside container */
+}
 
- .slidecontainer {
-    width: 100%; /* Width of the outside container */
- }
-  
-  /* The slider itself */
-  .slider {
-    -webkit-appearance: none;  /* Override default CSS styles */
-    appearance: none;
-    width: 100%; /* Full-width */
-    height: 25px; /* Specified height */
-    background: #d3d3d3; /* Grey background */
-    outline: none; /* Remove outline */
-    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
-    transition: opacity .2s;
-  }
-  
-  /* Mouse-over effects */
-  .slider:hover {
-    opacity: 1; /* Fully shown on mouse-over */
-  }
-  
-  /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-  .slider::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Override default look */
-    appearance: none;
-    width: 25px; /* Set a specific slider handle width */
-    height: 25px; /* Slider handle height */
-    background: #04AA6D; /* Green background */
-    cursor: pointer; /* Cursor on hover */
-  }
-  
-  .slider::-moz-range-thumb {
-    width: 25px; /* Set a specific slider handle width */
-    height: 25px; /* Slider handle height */
-    background: #04AA6D; /* Green background */
-    cursor: pointer; /* Cursor on hover */
-  }
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;
+  /* Override default CSS styles */
+  appearance: none;
+  width: 100%;
+  /* Full-width */
+  height: 25px;
+  /* Specified height */
+  background: #d3d3d3;
+  /* Grey background */
+  outline: none;
+  /* Remove outline */
+  opacity: 0.7;
+  /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s;
+  /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1;
+  /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  /* Override default look */
+  appearance: none;
+  width: 25px;
+  /* Set a specific slider handle width */
+  height: 25px;
+  /* Slider handle height */
+  background: #04AA6D;
+  /* Green background */
+  cursor: pointer;
+  /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  /* Set a specific slider handle width */
+  height: 25px;
+  /* Slider handle height */
+  background: #04AA6D;
+  /* Green background */
+  cursor: pointer;
+  /* Cursor on hover */
+}

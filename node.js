@@ -3,15 +3,16 @@ const lineConstructor = d3.line().x(d => d[0]).y(d => d[1]);
 class Node {
     static ACTIVE = 0;
     static INACTIVE = 1;
+    static VISITED = 2;
     static LEFT = "L";
     static RIGHT = "R";
     constructor(nodeId) {
         this.nodeId = nodeId;
         this.lineIdx = 0; // Each frame already starts at line #2.
         if (typeof nodeId === "string") {
-            this.lines = [2, 3];
+            this.lines = [1, 2, 3];
         } else {
-            this.lines = [2, 5, 6, 7];
+            this.lines = [1, 2, 5, 6, 7];
         }
     }
 
@@ -23,7 +24,7 @@ class Node {
         this.lineIdx++;
     }
 
-    restore() {
+    restoreCounter() {
         this.lineIdx = this.lines.length - 1;
     }
 
@@ -73,35 +74,65 @@ class Node {
     // Manipulate DOM according to state.
     activate() {
         const frame = this.getFrame();
-        if (this.valid()) {
-            this.markGraphNode(Node.ACTIVE);
-        } else {
-            this.getNull().removeClass("hidden");
-        }
+        this.markGraphNode(Node.ACTIVE);
         this.getConnector().addClass('active');
-        frame.find('pre').removeClass("inactive").addClass('active');
+        const pre = frame.find('pre');
+        pre.removeClass("inactive");
+        pre.addClass("active");
         frame.find('.line-highlight').removeClass('inactive suspended');
     }
 
     deactivate() {
         const frame = this.getFrame();
-        frame.find('pre').addClass('inactive');
-        frame.find('.line-highlight').addClass('inactive suspended');
+        const pre = frame.find('pre');
+        pre.addClass('inactive');
+        pre.removeClass('active');
+        frame.find('.line-highlight').addClass('inactive');
+        // console.log(`about to remove active class from connector ${this.nodeId} `, this.getConnector());
         this.getConnector().removeClass('active');
-        if (this.valid()) {
-            this.markGraphNode(Node.INACTIVE);
-        }
+        this.markGraphNode(Node.INACTIVE);
     }
 
     markGraphNode(state) {
+        const node = this.getGraphNodeFill();
+
         if (state === Node.ACTIVE) {
-            this.getGraphNodeFill().addClass("active");
+            if (this.isNull()) {
+                const n = this.getNull();
+                n.removeClass("visited");
+                n.addClass("active");
+            } else {
+                node.addClass("active");
+                // THIS IS A HACK: assumes that the text label node is always the first node in the HTML.
+                this.getGraphNode().find("text").first().removeClass("visited");
+            }
+        } else if (state === Node) {
+            node.removeClass("active");
+        } else if (state === Node.VISITED) {
+            if (this.isNull()) {
+                const n = this.getNull();
+                n.addClass("visited");
+                n.removeClass("active");
+            } else {
+                node.removeClass("active");
+                node.addClass("visited");
+                this.getGraphNode().find('text').addClass("visited");
+            }
         } else {
-            this.getGraphNodeFill().removeClass("active");
+            // reset the node to its original state
+            if (this.isNull()) {
+                const n = this.getNull();
+                n.removeClass("visited");
+                n.removeClass("active");
+            } else {
+                this.getGraphNode().find("text").first().removeClass("visited");
+                node.removeClass("visited");
+                node.removeClass("active");
+            }
         }
     }
 
-    connect() {
+    connect(activate) {
         // const root = this.getFrame().find(".function").next().next()[0];
         const root = this.getFrame()[0];
         const {
@@ -110,7 +141,7 @@ class Node {
             height
         } = root.getBoundingClientRect();
 
-        const startY = top + (height * .25);
+        const startY = top + (height * .19);
 
         const graphNode = this.valid() ? this.getGraphNode().find("text")[0] : this.getNull()[0];
         const {
@@ -128,9 +159,10 @@ class Node {
             [nodeX, nodeY + buffer]
         ]
 
+        const c = activate ? "connector active" : 'connector';
         d3.select("#svg_output").append("path")
             .attr("id", `connector-${this.nodeId}`)
-            .attr("class", "connector active")
+            .attr("class", c)
             .datum(points)
             .attr("d", lineConstructor)
     }
@@ -139,28 +171,34 @@ class Node {
     // Different than deactivate, is called when another node is placed on top of this frame.
     destroy() {
         const frame = this.getFrame();
-        frame.addClass("zoom");
         $(`#connector-${this.nodeId}`).remove();
-        if (this.isNull()) {
-            this.getNull().addClass("hidden");
-        }
-        this.markGraphNode(this.INACTIVE);
+        this.markGraphNode(Node.VISITED);
         frame.remove();
+    }
+
+    // restore the infromation about this node
+    restore() {
+        const frame = this.getFrame();
+        $(`#connector-${this.nodeId}`).remove();
+        frame.remove();
+        this.markGraphNode();
     }
 
     // Insert code frame for this node.
     createFrame(counter) {
-        const elem = $(`<div id="frame-${this.nodeId}-container" class="frame line-numbers"><pre data-line=${this.getCurrentLineNumber()} id="frame-${this.nodeId}"><code class="language-python">def dfs(root):
+        const elem = $(`<div id="frame-${this.nodeId}-container" class="frame line-numbers"><pre data-line=${this.getCurrentLineNumber()} id="frame-${this.nodeId}" class="active"><code class="language-python">def dfs(root):
   if not root:
     return
 
   print(root.value)
   dfs(root.left)
   dfs(root.right)
-</code></pre></div>`);
+</code>
+</pre>
+</div>`);
 
         elem.css({
-            left: `${(counter) * 140 + 30}px`,
+            left: `${(counter) * 210 + 30}px`,
             top: `${(counter) * 80}px`
         });
         this.advance(); // lineIdx always points to the NEXT line of code to be executed.

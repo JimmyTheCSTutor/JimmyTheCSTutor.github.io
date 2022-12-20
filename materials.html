@@ -303,6 +303,9 @@
 		<div class="frame-container">
 			<button onClick="prevStep()">Prev Step</button>
 			<button onClick="nextStep()">Next Step</button>
+			<div class="slidecontainer">
+				
+			</div>
 		</div>
 	</div>
 </body>
@@ -319,21 +322,24 @@
 
 	const steps = [
 		// Node 5
-		{ forward: wrapFunction(newFrame, this, [5]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [5]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 10
-		{ forward: wrapFunction(newFrame, this, [10]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [10]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (Node 10.left)
-		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.LEFT, true]) },
 		// Back to Node 10
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (Node 10.right)
-		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame},
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.RIGHT, true]) },
 		// Back to Node 10
@@ -341,25 +347,30 @@
 		// Back to Node 5
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 12
-		{ forward: wrapFunction(newFrame, this, [12]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [12]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 6
-		{ forward: wrapFunction(newFrame, this, [6]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [6]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 9
-		{ forward: wrapFunction(newFrame, this, [9]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [9]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (Node.9 left)
-		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 9
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.LEFT, true]) },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.9 right)
-		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 9
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.RIGHT, true]) },
@@ -367,7 +378,8 @@
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [9, true]) },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.6 right)
-		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 6
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.RIGHT, true]) },
@@ -375,17 +387,20 @@
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [6, true]) },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 8
-		{ forward: wrapFunction(newFrame, this, [8]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [8]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.8 left)
-		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.LEFT, true]) },
 		// Back to 8
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.8 right)
-		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popFrame },
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 8
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.RIGHT, true]) },
@@ -401,6 +416,17 @@
 		const { forward } = steps[stepIdx];
 		forward();
 		stepIdx++;
+		$('#progress').val(stepIdx);
+	}
+
+	function popAndRestoreFrame() {
+		const toRemove = stack.pop();
+		toRemove.restore();
+
+		const nextNode = stack[stack.length - 1];
+		if (nextNode) {
+			nextNode.activate();
+		}
 	}
 
 	function popFrame() {
@@ -431,7 +457,7 @@
 		// if restoring this frame because we hit previous step, set the current line number
 		// to the last line of the frame before creating it.
 		if (restore) {
-			n.restore();
+			n.restoreCounter();
 		}
 
 		// append stack frame for newNode.
@@ -448,7 +474,10 @@
 		// HACK: annotation node connection until after the frame animation completes
 		// so that the start of the connection can begin at the correct place.
 		setTimeout(() => {
-			n.connect();
+			// Do not activate the "connection" line if a new frame was created in between this and
+			// when the setTimeout function actually ran.
+			const activate = nodeId === stack[stack.length - 1].nodeId;
+			n.connect(activate);
 		}, 400);
 	}
 
@@ -482,9 +511,13 @@
 		stepIdx--;
 		const { undo } = steps[stepIdx];
 		undo();
+		$('#progress').val(stepIdx);
 	}
 
 	$(document).ready(function () {
+		$('.slidecontainer').append(
+			`<input type="range" min="0" max=${steps.length} value="0" class="slider" id="progress">`
+		);
 		nextStep();
 	});
 
