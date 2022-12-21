@@ -11,18 +11,13 @@
 }
 
 .container {
-  width: 100%;
   margin-left: 30px;
   margin-top: 30px;
+  width: 100%;
 }
 
 .frame-container {
   width: 70%;
-}
-
-.frame {
-  width: 20%;
-  position: absolute;
 }
 
 .nested-frame {
@@ -30,78 +25,112 @@
 }
 
 path.node-fill {
-  stroke: none;
   fill: none;
   stroke-width: .5;
+  stroke: none;
 }
 
 path.node-outline {
-  stroke: black;
-  stroke-width: 1;
   fill: none;
+  stroke-width: 1;
+  stroke: black;
 }
 
 path.connector {
-  fill: none;
-  stroke: #cacdcf;
-  stroke-width: 1;
-  stroke-dasharray: 10,3;
-  stroke-dashoffset: 500;
   animation: dash .3s linear forwards;
+  fill: none;
+  stroke-dasharray: 10, 3;
+  stroke-dashoffset: 500;
+  stroke-width: 1;
+  stroke: #cacdcf;
   z-index: -1;
 }
 
+.node-fill.active  {
+  fill: #429c38aa;
+  stroke: #429c38aa;
+}
+
+.node-outline.active {
+  stroke: #429c38aa;
+}
+
+/* .node-fill.visited  {
+  fill: #dfdfdfa8;
+  stroke: #dfdfdfa8;
+}
+
+.node-outline.visited {
+  stroke: #dfdfdfa8;
+} */
+
 @keyframes dash {
+
   to {
     stroke-dashoffset: 0;
   }
 }
 
-/* Should be the last rule so it overrides */
-path.active {
-  stroke: #429c38aa;
+g.visited {
+  stroke: #00000055;
 }
 
-path.visited {
-  stroke: #00000055;
+.connector circle {
+  stroke: #cacdcf;
+}
+
+/* Should be the last rule so it overrides */
+g.active, g.active path, .connector.active circle {
+  stroke: #429c38aa;
 }
 
 
 .frame>pre {
   background: #fffffe;
-  border-radius: 10px;
-  border: 2px solid #dfdfdfa8;
-  animation: append-animate .3s linear;
-  overflow-x: hidden;
+  /* border-radius: 10px; */
+  border-right: 2px solid #dfdfdfa8;
   font-size: 14px;
+  margin: 0;
   padding-bottom: 0;
+  flex-grow: 1.5;
+  overflow-x: hidden;
 }
 
-.frame>pre.active {
-  border: 2px solid #429c38aa;
+.frame.active>pre {
+  border-right: 2px solid #429c38aa;
 }
 
 .frame {
+  animation: append-animate .3s linear;
+  border-radius: 10px;
+  border: 2px solid #dfdfdfa8;
+  position: absolute;
+  width: 32.5%;
+  overflow-x: hidden;
+}
+
+.frame.active {
   border: 2px solid #429c38aa;
-  border-radius: 10px
 }
 
 
 @keyframes append-animate {
+
   from {
-    transform: scale(0);
     border: 2px solid #429c38aa;
     opacity: 0;
+    transform: scale(0);
   }
 
   to {
-    transform: scale(1);
-    opacity: 1;
     border: 2px solid #429c38aa;
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
 @keyframes blinkingBackground {
+
   0% {
     background-color: #dfdfdfa8
   }
@@ -117,79 +146,107 @@ path.visited {
   ;
 }
 
-#svg_output {
-  z-index: 2;
-  /* margin-top: 40px; */
-}
-
-.frame {
-
-}
-
 
 text.null.active {
   fill: #429c38aa;
 }
 
-text.visited,
+/* text.visited,
 text.null.visited {
   fill: #00000055;
+} */
+
+.variables {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.25rem;
 }
 
 
 .slidecontainer {
   width: 100%;
-  /* Width of the outside container */
+}
+
+table.variable-grid {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.variables td {
+  text-align: right;
+}
+
+.variables td.first-cell {
+  border-right: 1px solid silver;
+}
+
+tr.first-row td {
+  border-bottom: 1px solid silver;
+}
+
+.variables td {
+  /* border-bottom: 1px solid silver; */
+  padding: .3em;
+  color: #555;
+}
+
+.variables td.root-cell {
+  color: white;
 }
 
 /* The slider itself */
 .slider {
   -webkit-appearance: none;
-  /* Override default CSS styles */
-  appearance: none;
-  width: 100%;
-  /* Full-width */
-  height: 25px;
-  /* Specified height */
-  background: #d3d3d3;
-  /* Grey background */
-  outline: none;
-  /* Remove outline */
-  opacity: 0.7;
-  /* Set transparency (for mouse-over effects on hover) */
   -webkit-transition: .2s;
-  /* 0.2 seconds transition on hover */
+  appearance: none;
+  background: #d3d3d3;
+  height: 25px;
+  opacity: 0.7;
+  outline: none;
   transition: opacity .2s;
+  width: 100%;
+
+  /* Override default CSS styles */
+  /* Full-width */
+  /* Specified height */
+  /* Grey background */
+  /* Remove outline */
+  /* Set transparency (for mouse-over effects on hover) */
+  /* 0.2 seconds transition on hover */
 }
 
 /* Mouse-over effects */
 .slider:hover {
   opacity: 1;
+
   /* Fully shown on mouse-over */
 }
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  /* Override default look */
   appearance: none;
-  width: 25px;
-  /* Set a specific slider handle width */
-  height: 25px;
-  /* Slider handle height */
   background: #04AA6D;
-  /* Green background */
   cursor: pointer;
+  height: 25px;
+  width: 25px;
+
+  /* Override default look */
+  /* Set a specific slider handle width */
+  /* Slider handle height */
+  /* Green background */
   /* Cursor on hover */
 }
 
 .slider::-moz-range-thumb {
-  width: 25px;
-  /* Set a specific slider handle width */
-  height: 25px;
-  /* Slider handle height */
   background: #04AA6D;
-  /* Green background */
   cursor: pointer;
+  height: 25px;
+  width: 25px;
+
+  /* Set a specific slider handle width */
+  /* Slider handle height */
+  /* Green background */
   /* Cursor on hover */
 }

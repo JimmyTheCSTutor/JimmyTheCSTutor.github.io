@@ -76,19 +76,16 @@ class Node {
         const frame = this.getFrame();
         this.markGraphNode(Node.ACTIVE);
         this.getConnector().addClass('active');
-        const pre = frame.find('pre');
-        pre.removeClass("inactive");
-        pre.addClass("active");
+        frame.removeClass("inactive");
+        frame.addClass("active");
         frame.find('.line-highlight').removeClass('inactive suspended');
     }
 
     deactivate() {
         const frame = this.getFrame();
-        const pre = frame.find('pre');
-        pre.addClass('inactive');
-        pre.removeClass('active');
+        frame.addClass('inactive');
+        frame.removeClass('active');
         frame.find('.line-highlight').addClass('inactive');
-        // console.log(`about to remove active class from connector ${this.nodeId} `, this.getConnector());
         this.getConnector().removeClass('active');
         this.markGraphNode(Node.INACTIVE);
     }
@@ -132,16 +129,21 @@ class Node {
         }
     }
 
+    getRootCell() {
+
+    }
+
     connect(activate) {
-        // const root = this.getFrame().find(".function").next().next()[0];
-        const root = this.getFrame()[0];
-        const {
+        const root = this.getFrame().find(".root-cell")[0];
+        // const root = this.getFrame()[0];
+        let {
             right: startX,
             top,
             height
         } = root.getBoundingClientRect();
 
-        const startY = top + (height * .19);
+        const startY = top + height / 2;
+        startX = startX + 2;
 
         const graphNode = this.valid() ? this.getGraphNode().find("text")[0] : this.getNull()[0];
         const {
@@ -160,11 +162,20 @@ class Node {
         ]
 
         const c = activate ? "connector active" : 'connector';
-        d3.select("#svg_output").append("path")
-            .attr("id", `connector-${this.nodeId}`)
-            .attr("class", c)
+        const g = d3.select("#svg_output").append("g").attr("class", c).attr("id", `connector-${this.nodeId}`);
+
+        g.append("path")
+            .attr("class", "connector")
             .datum(points)
             .attr("d", lineConstructor)
+
+        g
+            .append("circle")
+            .attr("cx", startX)
+            .attr("cy", startY)
+            .attr("r", 4)
+            .attr("fill", "white")
+
     }
 
     // completely removes this frame from the DOM
@@ -186,7 +197,7 @@ class Node {
 
     // Insert code frame for this node.
     createFrame(counter) {
-        const elem = $(`<div id="frame-${this.nodeId}-container" class="frame line-numbers"><pre data-line=${this.getCurrentLineNumber()} id="frame-${this.nodeId}" class="active"><code class="language-python">def dfs(root):
+        const elem = $(`<div id="frame-${this.nodeId}-container" class="flex active frame line-numbers"><pre data-line=${this.getCurrentLineNumber()} id="frame-${this.nodeId}"><code class="language-python">def dfs(root):
   if not root:
     return
 
@@ -195,11 +206,21 @@ class Node {
   dfs(root.right)
 </code>
 </pre>
+<div class="variables">
+    <table class="variable-grid">
+        <tr class="first-row">
+            <td class="first-cell">root</td>
+            <td class="root-cell"></td>
+        </tr>
+        
+        
+    </table>
+</div>
 </div>`);
 
         elem.css({
             left: `${(counter) * 210 + 30}px`,
-            top: `${(counter) * 80}px`
+            top: `${(counter) * 80 + 30}px`
         });
         this.advance(); // lineIdx always points to the NEXT line of code to be executed.
         return elem;
