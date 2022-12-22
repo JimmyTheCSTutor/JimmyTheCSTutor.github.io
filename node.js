@@ -132,31 +132,50 @@ class Node {
     }
 
     connect(activate) {
-        const root = this.getFrame().find(".root-cell")[0];
+        // TODO: change this to the per-animation container
+        const parent = $('.animation-container');
+        const {
+            top: parentTop,
+            left: parentLeft,
+        } = parent.offset();
+
+        const root = this.getFrame().find(".root-cell");
         // const root = this.getFrame()[0];
         let {
-            right: startX,
-            top,
-            height
-        } = root.getBoundingClientRect();
+            left: elemLeft,
+            top: elemTop,
+        } = root.offset();
 
-        const startY = top + height / 2;
-        startX = startX + 2;
+        // Make this a percentage of the total width / height of the connector.
+        let startX = elemLeft - parentLeft;
+        const height = root.height();
+        const top = elemTop - parentTop;
 
-        const graphNode = this.valid() ? this.getGraphNode().find("text")[0] : this.getNull()[0];
-        const {
-            x: nodeX,
-            y: nodeY
-        } = graphNode.getBoundingClientRect();
+        let startY = top + height / 2;
 
-        const buffer = 10;
+        const graphNode = this.valid() ? this.getGraphNode().find("text") : this.getNull();
+        let {
+            left: nodeX,
+            top: nodeY
+        } = graphNode.offset();
+
+        nodeX = nodeX - parentLeft;
+        nodeY = nodeY - parentTop;
+
+        const X_BUFFER = 10;
+        const Y_BUFFER = 10;
+
+        startX = startX + X_BUFFER;
+        startY = startY + 5;
+        nodeY += Y_BUFFER;
+        nodeX = nodeX - X_BUFFER;
 
         const midX = startX + (nodeX - startX) / 2;
         const points = [
             [startX, startY],
             [midX, startY],
-            [midX, nodeY + buffer],
-            [nodeX, nodeY + buffer]
+            [midX, nodeY],
+            [nodeX, nodeY]
         ]
 
         const c = activate ? "connector active" : 'connector';
@@ -183,6 +202,7 @@ class Node {
         frame.addClass(Node.DELETE);
         $(`#connector-${this.nodeId}`).remove();
         this.markGraphNode(Node.VISITED);
+        // frame.remove();
     }
 
     // reset all the state about this node.
@@ -214,6 +234,7 @@ class Node {
 </div>
 </div>`);
 
+        // TODO: remove the hard-coding of 150 and 80 and make them relative to width of the viewport.
         elem.css({
             left: `${(counter) * 150 + 30}px`,
             top: `${(counter) * 80 + 30}px`

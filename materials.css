@@ -1,3 +1,10 @@
+.animation-container {
+  position: relative;
+  width: 80%;
+  margin: 0 auto;
+}
+
+
 .line-highlight {
   background: #429c38aa;
 }
@@ -10,14 +17,9 @@
   animation: blinkingBackground 3s infinite;
 }
 
-.container {
+.frame-container {
   margin-left: 30px;
   margin-top: 30px;
-  width: 100%;
-}
-
-.frame-container {
-  width: 70%;
 }
 
 .nested-frame {
@@ -39,7 +41,7 @@ path.node-outline {
 path.connector {
   animation: dash .3s linear forwards;
   fill: none;
-  stroke-dasharray: 10,5;
+  stroke-dasharray: 10, 5;
   stroke-dashoffset: 30;
   stroke-width: 1;
   stroke: #cacdcf;
@@ -62,7 +64,7 @@ path.connector {
   }
 }
 
-.node-fill.visited  {
+.node-fill.visited {
   fill: #dfdfdfa8;
   stroke: #dfdfdfa8;
 }
@@ -128,11 +130,11 @@ pre[class*=language-].line-numbers {
   animation: delete forwards 0.5s linear 1;
 }
 
-@keyframes delete { 
+@keyframes delete {
   0% {
     transform: scale(1);
   }
-  
+
   100% {
     width: 0;
     transform: scale(0);
@@ -175,15 +177,15 @@ pre[class*=language-].line-numbers {
 @keyframes blinkingBorder {
 
   0% {
-    border-color:#429c3855;
+    border-color: #429c3855;
   }
 
   50% {
-    border-color:#429c38ff;
+    border-color: #429c38ff;
   }
 
   100% {
-    border-color:#429c3855;
+    border-color: #429c3855;
   }
 }
 
@@ -288,4 +290,3 @@ tr.first-row td {
   /* Green background */
   /* Cursor on hover */
 }
-
