@@ -8,7 +8,6 @@
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Tinos|Handlee|Sedgwick+Ave|Londrina+Outline"
 		rel="stylesheet">
 	<link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
-	<link rel="stylesheet" href="https://cdn.rawgit.com/tachyons-css/tachyons/v4.9.1/css/tachyons.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
 	<link rel="stylesheet" href="prism.css">
 	<script src="prism.js"></script>
@@ -85,8 +84,8 @@
 					style="stroke: rgb(0, 0, 0); stroke-width: 0.5; fill: none;"></path>
 			</pattern>
 		</defs>
-		<svg x="70%">
-			<g id="graph0" class="graph" transform="translate(0, 310) scale(1.0 1.0) rotate(0)">
+		<svg x="80%">
+			<g id="graph0" class="graph" transform="translate(0, 280) scale(1.0 1.0) rotate(0)">
 				<title>G</title>
 				<!-- 5 -->
 				<g id="node1" class="node">
@@ -117,11 +116,11 @@
 						fill="#000000">10</text>
 
 					<!-- 10 LEFT CHILD (null) -->
-					<text id="10-L" class="null hidden" text-anchor="middle" x="12" y="-122.8" font-family="Handlee"
-						font-size="14.00" fill="#000000">null</text>
+					<text id="10-L" class="null hidden" text-anchor="middle" x="15" y="-122.8" font-family="Handlee"
+						font-size="14.00" fill="#000000">None</text>
 					<!-- 10 RIGHT CHILD (null) -->
-					<text id="10-R" class="null hidden" text-anchor="middle" x="42" y="-122.8" font-family="Handlee"
-						font-size="14.00" fill="#000000">null</text>
+					<text id="10-R" class="null hidden" text-anchor="middle" x="50" y="-122.8" font-family="Handlee"
+						font-size="14.00" fill="#000000">None</text>
 				</g>
 				<!-- 5&#45;&gt;10 -->
 				<g id="edge1" class="edge">
@@ -191,7 +190,7 @@
 					<text text-anchor="middle" x="63" y="-85.8" font-family="Handlee" font-size="14.00"
 						fill="#000000">6</text>
 					<text id="6-R" class="null hidden" text-anchor="middle" x="83" y="-50.8" font-family="Handlee"
-						font-size="14.00" fill="#000000">null</text>
+						font-size="14.00" fill="#000000">None</text>
 				</g>
 				<!-- 12&#45;&gt;6 -->
 				<g id="edge3" class="edge">
@@ -228,10 +227,10 @@
 						fill="#000000">8</text>
 					<!-- 8 LEFT CHILD (null) -->
 					<text id="8-L" class="null hidden" text-anchor="middle" x="120" y="-50.8" font-family="Handlee"
-						font-size="14.00" fill="#000000">null</text>
+						font-size="14.00" fill="#000000">None</text>
 					<!-- 8 RIGHT CHILD (null) -->
-					<text id="8-R" class="null hidden" text-anchor="middle" x="150" y="-50.8" font-family="Handlee"
-						font-size="14.00" fill="#000000">null</text>
+					<text id="8-R" class="null hidden" text-anchor="middle" x="155" y="-50.8" font-family="Handlee"
+						font-size="14.00" fill="#000000">None</text>
 				</g>
 				<!-- 12&#45;&gt;8 -->
 				<g id="edge4" class="edge">
@@ -269,10 +268,10 @@
 
 					<!-- 9 LEFT CHILD (null) -->
 					<text id="9-L" class="null hidden" text-anchor="middle" x="48" y="21.2" font-family="Handlee"
-						font-size="14.00" fill="#000000">null</text>
+						font-size="14.00" fill="#000000">None</text>
 					<!-- 9 RIGHT CHILD (null) -->
-					<text id="9-R" class="null hidden" text-anchor="middle" x="78" y="21.2" font-family="Handlee"
-						font-size="14.00" fill="#000000">null</text>
+					<text id="9-R" class="null hidden" text-anchor="middle" x="83" y="21.2" font-family="Handlee"
+						font-size="14.00" fill="#000000">None</text>
 
 				</g>
 				<!-- 6&#45;&gt;9 -->
@@ -304,7 +303,6 @@
 			<button onClick="prevStep()">Prev Step</button>
 			<button onClick="nextStep()">Next Step</button>
 			<div class="slidecontainer">
-				
 			</div>
 		</div>
 	</div>
@@ -322,24 +320,25 @@
 
 	const steps = [
 		// Node 5
-		{ forward: wrapFunction(newFrame, this, [5]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [5]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 10
-		{ forward: wrapFunction(newFrame, this, [10]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [10]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (Node 10.left)
-		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.LEFT, true]) },
 		// Back to Node 10
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (Node 10.right)
-		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame },
+		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.RIGHT, true]) },
 		// Back to Node 10
@@ -347,29 +346,29 @@
 		// Back to Node 5
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 12
-		{ forward: wrapFunction(newFrame, this, [12]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [12]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 6
-		{ forward: wrapFunction(newFrame, this, [6]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [6]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 9
-		{ forward: wrapFunction(newFrame, this, [9]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [9]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (Node.9 left)
-		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 9
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.LEFT, true]) },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.9 right)
-		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 9
@@ -378,7 +377,7 @@
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [9, true]) },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.6 right)
-		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 6
@@ -387,19 +386,19 @@
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [6, true]) },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Node 8
-		{ forward: wrapFunction(newFrame, this, [8]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [8]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.8 left)
-		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [Node.LEFT]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(popFrame, this, []), undo: wrapFunction(newFrame, this, [Node.LEFT, true]) },
 		// Back to 8
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Null (node.8 right)
-		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame},
+		{ forward: wrapFunction(newFrame, this, [Node.RIGHT]), undo: popAndRestoreFrame },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		{ forward: wrapFunction(nextLine, this, []), undo: prevLine },
 		// Back to 8
@@ -417,11 +416,12 @@
 		forward();
 		stepIdx++;
 		$('#progress').val(stepIdx);
+		$('#step').text(`Current step: ${stepIdx} out of ${steps.length}`);
 	}
 
 	function popAndRestoreFrame() {
 		const toRemove = stack.pop();
-		toRemove.restore();
+		toRemove.resetState();
 
 		const nextNode = stack[stack.length - 1];
 		if (nextNode) {
@@ -471,14 +471,21 @@
 
 		stack.push(n);
 
-		// HACK: annotation node connection until after the frame animation completes
-		// so that the start of the connection can begin at the correct place.
-		setTimeout(() => {
-			// Do not activate the "connection" line if a new frame was created in between this and
-			// when the setTimeout function actually ran.
-			const activate = nodeId === stack[stack.length - 1].nodeId;
-			n.connect(activate);
-		}, 400);
+		// Add event listeners so necessary Javascript executes when animations end.
+		elem
+			.on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
+				(e) => {
+					$(this).off(e);
+					if (e.target === e.currentTarget) {
+						if (e.target.classList.contains(Node.DELETE)) {
+							elem.remove();
+						} else {
+							const activate = nodeId === stack[stack.length - 1].nodeId;
+							n.connect(activate);
+						}
+					}
+
+				});
 	}
 
 	function prevLine() {
@@ -512,13 +519,45 @@
 		const { undo } = steps[stepIdx];
 		undo();
 		$('#progress').val(stepIdx);
+		$('#step').text(`Current step: ${stepIdx} out of ${steps.length}`);
 	}
 
 	$(document).ready(function () {
 		$('.slidecontainer').append(
 			`<input type="range" min="0" max=${steps.length} value="0" class="slider" id="progress">`
 		);
+
+		// TOOD: add resize event handlers to re-draw the connection lines.
+
 		nextStep();
+
+		$('.slidecontainer').append(
+			`<div id="step">Current step: ${stepIdx} out of ${steps.length}</div>`
+		);	
+
+		let start = parseInt($("#progress").val());
+
+		$('#progress').on("input", (e) => {
+			const curr = parseInt(e.target.value);
+			if (curr > start) {
+				for (let i = start; i < curr; i++) {
+					console.log("next: " , {i});
+					const {forward} = steps[i];
+					forward();
+				}
+			} else {
+				console.log({start, curr});
+				for (let i = start - 1; i >= curr; i--) {
+					console.log("prev: " , {i});
+					const {undo} = steps[i];
+					undo();
+				}
+			}
+			start = curr;
+			stepIdx = curr;
+
+			$('#step').text(`Current step: ${stepIdx} out of ${steps.length}`);
+		});
 	});
 
 </script>

@@ -39,14 +39,14 @@ path.node-outline {
 path.connector {
   animation: dash .3s linear forwards;
   fill: none;
-  stroke-dasharray: 10, 3;
-  stroke-dashoffset: 500;
+  stroke-dasharray: 10,5;
+  stroke-dashoffset: 30;
   stroke-width: 1;
   stroke: #cacdcf;
   z-index: -1;
 }
 
-.node-fill.active  {
+.node-fill.active {
   fill: #429c38aa;
   stroke: #429c38aa;
 }
@@ -55,20 +55,25 @@ path.connector {
   stroke: #429c38aa;
 }
 
-/* .node-fill.visited  {
+@keyframes dash {
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.node-fill.visited  {
   fill: #dfdfdfa8;
   stroke: #dfdfdfa8;
 }
 
 .node-outline.visited {
   stroke: #dfdfdfa8;
-} */
+}
 
-@keyframes dash {
-
-  to {
-    stroke-dashoffset: 0;
-  }
+text.visited,
+text.null.visited {
+  fill: #00000055;
 }
 
 g.visited {
@@ -80,14 +85,19 @@ g.visited {
 }
 
 /* Should be the last rule so it overrides */
-g.active, g.active path, .connector.active circle {
+g.active,
+g.active path,
+.connector.active circle {
   stroke: #429c38aa;
+}
+
+pre[class*=language-].line-numbers {
+  padding-left: 3.2em;
 }
 
 
 .frame>pre {
   background: #fffffe;
-  /* border-radius: 10px; */
   border-right: 2px solid #dfdfdfa8;
   font-size: 14px;
   margin: 0;
@@ -105,14 +115,32 @@ g.active, g.active path, .connector.active circle {
   border-radius: 10px;
   border: 2px solid #dfdfdfa8;
   position: absolute;
-  width: 32.5%;
+  width: 27.5%;
   overflow-x: hidden;
 }
 
 .frame.active {
   border: 2px solid #429c38aa;
+  /* animation: blinkingBorder 2s infinite linear; */
 }
 
+.frame.delete {
+  animation: delete forwards 0.5s linear 1;
+}
+
+@keyframes delete { 
+  0% {
+    transform: scale(1);
+  }
+  
+  100% {
+    width: 0;
+    transform: scale(0);
+    /* opacity: 0;
+    padding: 0;
+    margin: 0; */
+  }
+}
 
 @keyframes append-animate {
 
@@ -132,18 +160,31 @@ g.active, g.active path, .connector.active circle {
 @keyframes blinkingBackground {
 
   0% {
-    background-color: #dfdfdfa8
+    background-color: #dfdfdfa8;
   }
 
   50% {
-    background-color: #dfdfdf00
+    background-color: #dfdfdf00;
   }
 
   100% {
-    background-color: #dfdfdfa8
+    background-color: #dfdfdfa8;
+  }
+}
+
+@keyframes blinkingBorder {
+
+  0% {
+    border-color:#429c3855;
   }
 
-  ;
+  50% {
+    border-color:#429c38ff;
+  }
+
+  100% {
+    border-color:#429c3855;
+  }
 }
 
 
@@ -151,16 +192,13 @@ text.null.active {
   fill: #429c38aa;
 }
 
-/* text.visited,
-text.null.visited {
-  fill: #00000055;
-} */
 
 .variables {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 1.25rem;
+  padding: 1.25rem 0.75rem;
+  font-size: 14px;
 }
 
 
@@ -186,7 +224,6 @@ tr.first-row td {
 }
 
 .variables td {
-  /* border-bottom: 1px solid silver; */
   padding: .3em;
   color: #555;
 }
@@ -203,6 +240,7 @@ tr.first-row td {
   background: #d3d3d3;
   height: 25px;
   opacity: 0.7;
+  margin-top: 15px;
   outline: none;
   transition: opacity .2s;
   width: 100%;
@@ -250,3 +288,4 @@ tr.first-row td {
   /* Green background */
   /* Cursor on hover */
 }
+
