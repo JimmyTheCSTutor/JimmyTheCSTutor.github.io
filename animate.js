@@ -7,6 +7,7 @@ const wrapFunction = function (fn, context, params) {
     }
 }
 
+
 function advance(e) {
     const curr = parseInt(e.target.value);
 
@@ -16,14 +17,14 @@ function advance(e) {
             const {
                 forward
             } = this.toExecute[i];
-            forward();
+            forward(this);
         }
     } else {
         for (let i = this.stepIdx - 1; i >= curr; i--) {
             const {
                 undo
             } = this.toExecute[i];
-            undo();
+            undo(this);
         }
     }
     this.stepIdx = curr;
@@ -53,34 +54,13 @@ const renderAnimation = function (start, end) {
     // I think I want to .bind the event handlers of the Prev/Next Step buttons + the slider to execute against this context.
     const toExecute = [];
     for (let i = 0; i < end; i++) {
-
-        let {
+        const {
             forward,
             undo
         } = steps[i];
 
-        if (typeof forward === 'object') {
-            const {
-                fn,
-                params
-            } = forward;
-            forward = wrapFunction(fn, scope, params);
-        } else {
-            forward = wrapFunction(forward, scope, []);
-        }
-
-        if (typeof undo === 'object') {
-            const {
-                fn,
-                params
-            } = undo;
-            undo = wrapFunction(fn, scope, params);
-        } else {
-            undo = wrapFunction(undo, scope, []);
-        }
-
         if (i < start) {
-            forward();
+            forward(scope);
         } else {
             toExecute.push({
                 forward,
@@ -104,10 +84,7 @@ const renderAnimation = function (start, end) {
 const steps = [
     // Node 5
     {
-        forward: {
-            fn: newFrame,
-            params: [5]
-        },
+        forward: (scope) => newFrame(scope, 5),
         undo: undoNewFrame
     },
     {
@@ -124,11 +101,7 @@ const steps = [
     },
     // Node 10
     {
-
-        forward: {
-            fn: newFrame,
-            params: [10]
-        },
+        forward: (scope) => newFrame(scope, 10),
         undo: undoNewFrame
     },
     {
@@ -145,10 +118,7 @@ const steps = [
     },
     // Null (Node 10.left)
     {
-        forward: {
-            fn: newFrame,
-            params: ["L"]
-        },
+        forward: (scope) => newFrame(scope, "L"),
         undo: undoNewFrame
     },
     {
@@ -161,21 +131,19 @@ const steps = [
     },
     // Back to Node 10
     {
-        forward: popAndAdvance,
-        undo: () => {
-            console.log("In undo def in step: ", {
-                this: this
-            });
-            prevLine.call(this);
-            newFrame.call(this, "L", true);
+        forward: (scope) => {
+            popFrame(scope);
+            nextLine(scope);
+            // setTimeout(() => nextLine(scope), 500);
+        },
+        undo: (scope) => {
+            prevLine(scope);
+            newFrame(scope, "L", true);
         }
     },
     // Null (Node 10.right)
     {
-        forward: {
-            fn: newFrame,
-            params: ["R"]
-        },
+        forward: (scope) => newFrame(scope, "R"),
         undo: undoNewFrame
     },
     {
@@ -187,31 +155,25 @@ const steps = [
         undo: prevLine
     },
     {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: ["R", true]
+        forward: (scope) => {
+            popFrame(scope);
+            popFrame(scope);
+            nextLine(scope);
         },
-    },
-    // Back to Node 10
-    {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: [10, true]
-        },
+        undo: scope => {
+            prevLine(scope);
+            newFrame(scope, 10, true);
+            newFrame(scope, "R", true);
+        }
     },
     // Back to Node 5
-    {
-        forward: nextLine,
-        undo: prevLine
-    },
+    // {
+    //     forward: nextLine,
+    //     undo: prevLine
+    // },
     // Node 12
     {
-        forward: {
-            fn: newFrame,
-            params: [12]
-        },
+        forward: scope => newFrame(scope, 12),
         undo: undoNewFrame
     },
     {
@@ -228,10 +190,7 @@ const steps = [
     },
     // Node 6
     {
-        forward: {
-            fn: newFrame,
-            params: [6]
-        },
+        forward: scope => newFrame(scope, 6),
         undo: undoNewFrame
     },
     {
@@ -248,10 +207,7 @@ const steps = [
     },
     // Node 9
     {
-        forward: {
-            fn: newFrame,
-            params: [9]
-        },
+        forward: scope => newFrame(scope, 9),
         undo: undoNewFrame
     },
     {
@@ -268,10 +224,7 @@ const steps = [
     },
     // Null (Node.9 left)
     {
-        forward: {
-            fn: newFrame,
-            params: ["L"]
-        },
+        forward: scope => newFrame(scope, "L"),
         undo: undoNewFrame
     },
     {
@@ -284,22 +237,18 @@ const steps = [
     },
     // Back to 9
     {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: ["L", true]
+        forward: scope => {
+            popFrame(scope);
+            nextLine(scope);
         },
-    },
-    {
-        forward: nextLine,
-        undo: prevLine
+        undo: scope => {
+            prevLine(scope);
+            newFrame(scope, "L", true);
+        },
     },
     // Null (node.9 right)
     {
-        forward: {
-            fn: newFrame,
-            params: ["R"]
-        },
+        forward: scope => newFrame(scope, "R"),
         undo: undoNewFrame
     },
     {
@@ -312,30 +261,20 @@ const steps = [
     },
     // Back to 9
     {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: ["R", true]
+        forward: (scope) => {
+            popFrame(scope);
+            popFrame(scope);
+            nextLine(scope);
         },
-    },
-    // Back to 6
-    {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: [9, true]
-        },
-    },
-    {
-        forward: nextLine,
-        undo: prevLine
+        undo: scope => {
+            prevLine(scope);
+            newFrame(scope, 9, true);
+            newFrame(scope, "R", true);
+        }
     },
     // Null (node.6 right)
     {
-        forward: {
-            fn: newFrame,
-            params: ["R"]
-        },
+        forward: scope => newFrame(scope, "R"),
         undo: undoNewFrame
     },
     {
@@ -348,30 +287,20 @@ const steps = [
     },
     // Back to 6
     {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: ["R", true]
+        forward: (scope) => {
+            popFrame(scope);
+            popFrame(scope);
+            nextLine(scope);
         },
-    },
-    // Back to 12
-    {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: [6, true]
-        },
-    },
-    {
-        forward: nextLine,
-        undo: prevLine
+        undo: scope => {
+            prevLine(scope);
+            newFrame(scope, 6, true);
+            newFrame(scope, "R", true);
+        }
     },
     // Node 8
     {
-        forward: {
-            fn: newFrame,
-            params: [8]
-        },
+        forward: scope => newFrame(scope, 8),
         undo: undoNewFrame
     },
     {
@@ -388,10 +317,7 @@ const steps = [
     },
     // Null (node.8 left)
     {
-        forward: {
-            fn: newFrame,
-            params: ["L"]
-        },
+        forward: scope => newFrame(scope, "L"),
         undo: undoNewFrame
     },
     {
@@ -403,23 +329,18 @@ const steps = [
         undo: prevLine
     },
     {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: ["L", true]
+        forward: scope => {
+            popFrame(scope);
+            nextLine(scope);
         },
-    },
-    // Back to 8
-    {
-        forward: nextLine,
-        undo: prevLine
-    },
+        undo: scope => {
+            prevLine(scope);
+            newFrame(scope, "L", true);
+        },
+    }, // // Back to 8
     // Null (node.8 right)
     {
-        forward: {
-            fn: newFrame,
-            params: ["R"]
-        },
+        forward: scope => newFrame(scope, "R"),
         undo: undoNewFrame
     },
     {
@@ -432,79 +353,75 @@ const steps = [
     },
     // Back to 8
     {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: ["R", true]
+        forward: scope => {
+            popFrame(scope);
+            popFrame(scope);
+            popFrame(scope);
+            popFrame(scope);
         },
+        undo: scope => {
+            newFrame(scope, 5, true);
+            newFrame(scope, 12, true);
+            newFrame(scope, 8, true);
+            newFrame(scope, "R", true);
+        }
     },
-    // Back to 12
-    {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: [8, true]
-        },
-    },
-    // Back to 5
-    {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: [12, true]
-        },
-    },
-    // Finished.
-    {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: [5, true]
-        },
-    },
+    // // Back to 12
+    // {
+    //     forward: popFrame,
+    //     undo: scope => newFrame(scope, 8, true),
+    // },
+    // // Back to 5
+    // {
+    //     forward: popFrame,
+    //     undo: scope => newFrame(scope, 12, true),
+    // },
+    // // Finished.
+    // {
+    //     forward: popFrame,
+    //     undo: scope => newFrame(scope, 5, true),
+    // },
 ]
+
 
 // This function is called as a result of "undo-ing" a new frame that was added to the call stack.
 // It removes the frame, and resets all the visual state associated with node in the tree.
-function undoNewFrame() {
-    const toRemove = this.stack.pop();
+function undoNewFrame(scope) {
+    const toRemove = scope.stack.pop();
     toRemove.resetState();
 
-    const nextNode = this.stack[this.stack.length - 1];
+    const nextNode = scope.stack[scope.stack.length - 1];
     if (nextNode) {
         nextNode.activate();
     }
 }
 
-// Removes this frame from the call this.stack.
-function popFrame() {
-    const toRemove = this.stack.pop();
+// Removes this frame from the call stack.
+function popFrame(scope) {
+    const toRemove = scope.stack.pop();
     toRemove.destroy();
 
-    const nextNode = this.stack[this.stack.length - 1];
+    const nextNode = scope.stack[scope.stack.length - 1];
     if (nextNode) {
         nextNode.activate();
     }
 }
 
-function popAndAdvance() {
-    popFrame.call(this);
-    nextLine.call(this);
+function popAndAdvance(scope) {
+    popFrame(scope);
+    nextLine(scope);
 }
 
-// Challenge: each newFrame needs to know what DOM element to append the frame to. right now newFrame always appends to '.frame-container'
-// The challenge now is that I have a singular steps array which all new animations will "splice" from. How do I 
-//  Also: will the top + left positions of the frames work within this new model? (It should...)
-function newFrame(newNode, restore) {
+function newFrame(scope, newNode, restore) {
     let prevNode;
-    if (this.stack.length > 0) {
-        prevNode = this.stack[this.stack.length - 1];
+    if (scope.stack.length > 0) {
+        prevNode = scope.stack[scope.stack.length - 1];
         prevNode.deactivate();
     }
 
     // IMPLICIT: if newNode is null, then prevNode will be non-null
     let nodeId = newNode === "L" || newNode === "R" ? `${prevNode}-${newNode}` : newNode;
-    const n = new Node(nodeId, this.container, this.animationCount);
+    const n = new Node(nodeId, scope.container, scope.animationCount);
 
     // set current node active fill.
     n.activate();
@@ -516,14 +433,14 @@ function newFrame(newNode, restore) {
     }
 
     // append stack frame for newNode.
-    const elem = n.createFrame(this.stack.length);
-    this.container.append(elem);
+    const elem = n.createFrame(scope.stack.length);
+    scope.container.append(elem);
 
     // apply syntax highlighting.
-    Prism.highlightElement(this.container.find(`#frame-${nodeId} > code`)[0]);
-    Prism.plugins.lineHighlight.highlightLines(this.container.find(`#frame-${nodeId}`)[0])();
+    Prism.highlightElement(scope.container.find(`#frame-${nodeId} > code`)[0]);
+    Prism.plugins.lineHighlight.highlightLines(scope.container.find(`#frame-${nodeId}`)[0])();
 
-    this.stack.push(n);
+    scope.stack.push(n);
 
     // Add event listeners so necessary Javascript executes when animations end.
     elem
@@ -534,7 +451,7 @@ function newFrame(newNode, restore) {
                     if (e.target.classList.contains("delete")) {
                         elem.remove();
                     } else {
-                        const activate = nodeId === this.stack[this.stack.length - 1].nodeId;
+                        const activate = nodeId === scope.stack[scope.stack.length - 1].nodeId;
                         n.connect(activate);
                     }
                 }
@@ -544,19 +461,17 @@ function newFrame(newNode, restore) {
     return n;
 }
 
-
-
-function prevLine() {
-    const curr = this.stack[this.stack.length - 1];
+function prevLine(scope) {
+    const curr = scope.stack[scope.stack.length - 1];
     curr.retreat();
-    const id = this.container.find(`#frame-${this.stack[this.stack.length - 1]}`);
+    const id = scope.container.find(`#frame-${scope.stack[scope.stack.length - 1]}`);
     highlightLine(id, curr.getCurrentLineNumber());
     curr.advance();
 }
 
-function nextLine() {
-    const curr = this.stack[this.stack.length - 1];
-    const id = this.container.find(`#frame-${this.stack[this.stack.length - 1]}`);
+function nextLine(scope) {
+    const curr = scope.stack[scope.stack.length - 1];
+    const id = scope.container.find(`#frame-${scope.stack[scope.stack.length - 1]}`);
     highlightLine(id, curr.getCurrentLineNumber());
     curr.advance();
 }
