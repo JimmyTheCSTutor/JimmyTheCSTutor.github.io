@@ -1,5 +1,15 @@
 // Encapsulates DOM information for both the code frame and the node in the graph for a given node.
 const lineConstructor = d3.line().x(d => d[0]).y(d => d[1]);
+
+
+// map of node to edge id 
+const edgeMap = {
+    10: "edge1",
+    12: "edge2",
+    6: "edge3",
+    8: "edge4",
+    9: "edge5"
+}
 class Node {
     static ACTIVE = 0;
     static INACTIVE = 1;
@@ -13,7 +23,7 @@ class Node {
         if (typeof nodeId === "string") {
             this.lines = [1, 2, 3];
         } else {
-            this.lines = [1, 2, 5, 6, 7];
+            this.lines = [1, 2, 5, 6];
         }
         this.container = container;
         this.animationCount = animationCount;
@@ -82,6 +92,12 @@ class Node {
         frame.removeClass("inactive");
         frame.addClass("active");
         frame.find('.line-highlight').removeClass('inactive suspended');
+
+        if (this.valid()) {
+            const edgeId = edgeMap[this.nodeId];
+            const paths = this.container.find(`#${edgeId} path`);
+            paths.css({stroke: "black", fill: "black"});
+        }
     }
 
     deactivate() {
@@ -89,6 +105,7 @@ class Node {
         frame.addClass('inactive');
         frame.removeClass('active');
         frame.find('.line-highlight').addClass('inactive');
+        frame.find('.line-highlight').removeClass('flash');
         this.getConnector().removeClass('active');
         this.markGraphNode(Node.INACTIVE);
     }
@@ -201,6 +218,11 @@ class Node {
         frame.addClass(Node.DELETE);
         this.getConnector().remove();
         this.markGraphNode(Node.VISITED);
+        if (this.valid()) {
+            const edgeId = edgeMap[this.nodeId];
+            const paths = this.container.find(`#${edgeId} path`);
+            paths.css({stroke: "#dfdfdfa8", fill: "#dfdfdfa8"});
+        }
         // frame.remove();
     }
 
@@ -210,6 +232,7 @@ class Node {
         this.getConnector().remove();
         frame.remove();
         this.markGraphNode();
+       
     }
 
     // Insert code frame for this node.
@@ -218,7 +241,6 @@ class Node {
   if not node:
     return
 
-  print(node.value)
   dfs(node.left)
   dfs(node.right)
 </code>

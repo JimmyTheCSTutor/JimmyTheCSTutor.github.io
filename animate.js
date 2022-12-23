@@ -72,11 +72,16 @@ const renderAnimation = function (start, end) {
     scope["toExecute"] = toExecute;
 
     animationContainer.append(
-        `<input type="range" min="0" max=${toExecute.length} value="0" class="slider" id="progress">
+        `<button id="prev" disabled=${scope.stepIdx === 0}><</button>
+        <input type="range" min="0" max=${toExecute.length} value="0" class="slider" id="progress">
+		<button id="next">></button>
+
         <div id="step">Step 0 out of ${toExecute.length}</div>`
     );
 
     animationContainer.find('#progress').on("input", advance.bind(scope));
+    animationContainer.find('button#prev').on("click", () => prevStep(scope));
+    animationContainer.find('button#next').on("click", () => nextStep(scope));
     animationCount += 1;
     return scope;
 }
@@ -95,18 +100,10 @@ const steps = [
         forward: nextLine,
         undo: prevLine
     },
-    {
-        forward: nextLine,
-        undo: prevLine
-    },
     // Node 10
     {
         forward: (scope) => newFrame(scope, 10),
         undo: undoNewFrame
-    },
-    {
-        forward: nextLine,
-        undo: prevLine
     },
     {
         forward: nextLine,
@@ -133,13 +130,15 @@ const steps = [
     {
         forward: (scope) => {
             popFrame(scope);
-            nextLine(scope);
-            // setTimeout(() => nextLine(scope), 500);
+            flashLine(scope);
         },
         undo: (scope) => {
-            prevLine(scope);
             newFrame(scope, "L", true);
         }
+    },
+    {
+        forward: nextLine,
+        undo: prevLine
     },
     // Null (Node 10.right)
     {
@@ -157,28 +156,28 @@ const steps = [
     {
         forward: (scope) => {
             popFrame(scope);
-            popFrame(scope);
-            nextLine(scope);
+            flashLine(scope);
         },
         undo: scope => {
-            prevLine(scope);
-            newFrame(scope, 10, true);
             newFrame(scope, "R", true);
         }
     },
+    {
+        forward: (scope) => {
+            popFrame(scope);
+            flashLine(scope);
+        },
+        undo: scope => newFrame(scope, 10, true),
+    },
     // Back to Node 5
-    // {
-    //     forward: nextLine,
-    //     undo: prevLine
-    // },
+    {
+        forward: nextLine,
+        undo: prevLine
+    },
     // Node 12
     {
         forward: scope => newFrame(scope, 12),
         undo: undoNewFrame
-    },
-    {
-        forward: nextLine,
-        undo: prevLine
     },
     {
         forward: nextLine,
@@ -201,18 +200,10 @@ const steps = [
         forward: nextLine,
         undo: prevLine
     },
-    {
-        forward: nextLine,
-        undo: prevLine
-    },
     // Node 9
     {
         forward: scope => newFrame(scope, 9),
         undo: undoNewFrame
-    },
-    {
-        forward: nextLine,
-        undo: prevLine
     },
     {
         forward: nextLine,
@@ -239,12 +230,13 @@ const steps = [
     {
         forward: scope => {
             popFrame(scope);
-            nextLine(scope);
+            flashLine(scope);
         },
-        undo: scope => {
-            prevLine(scope);
-            newFrame(scope, "L", true);
-        },
+        undo: scope => newFrame(scope, "L", true),
+    },
+    {
+        forward: nextLine,
+        undo: prevLine
     },
     // Null (node.9 right)
     {
@@ -263,14 +255,22 @@ const steps = [
     {
         forward: (scope) => {
             popFrame(scope);
-            popFrame(scope);
-            nextLine(scope);
+            flashLine(scope);
         },
         undo: scope => {
-            prevLine(scope);
-            newFrame(scope, 9, true);
             newFrame(scope, "R", true);
         }
+    },
+    {
+        forward: (scope) => {
+            popFrame(scope);
+            flashLine(scope);
+        },
+        undo: scope => newFrame(scope, 9, true),
+    },
+    {
+        forward: nextLine,
+        undo: prevLine
     },
     // Null (node.6 right)
     {
@@ -289,23 +289,27 @@ const steps = [
     {
         forward: (scope) => {
             popFrame(scope);
-            popFrame(scope);
-            nextLine(scope);
+            flashLine(scope);
         },
         undo: scope => {
-            prevLine(scope);
-            newFrame(scope, 6, true);
             newFrame(scope, "R", true);
         }
+    },
+    {
+        forward: (scope) => {
+            popFrame(scope);
+            flashLine(scope);
+        },
+        undo: scope => newFrame(scope, 6, true),
+    },
+    {
+        forward: nextLine,
+        undo: prevLine
     },
     // Node 8
     {
         forward: scope => newFrame(scope, 8),
         undo: undoNewFrame
-    },
-    {
-        forward: nextLine,
-        undo: prevLine
     },
     {
         forward: nextLine,
@@ -355,32 +359,36 @@ const steps = [
     {
         forward: scope => {
             popFrame(scope);
-            popFrame(scope);
-            popFrame(scope);
-            popFrame(scope);
+            flashLine(scope);
+            
         },
         undo: scope => {
-            newFrame(scope, 5, true);
-            newFrame(scope, 12, true);
-            newFrame(scope, 8, true);
             newFrame(scope, "R", true);
         }
     },
-    // // Back to 12
-    // {
-    //     forward: popFrame,
-    //     undo: scope => newFrame(scope, 8, true),
-    // },
-    // // Back to 5
-    // {
-    //     forward: popFrame,
-    //     undo: scope => newFrame(scope, 12, true),
-    // },
-    // // Finished.
-    // {
-    //     forward: popFrame,
-    //     undo: scope => newFrame(scope, 5, true),
-    // },
+    // Back to 12
+    {
+        forward: scope => {
+            popFrame(scope);
+            flashLine(scope);
+        },
+        undo: scope => newFrame(scope, 8, true),
+    },
+    // Back to 5
+    {
+        forward: scope => {
+            popFrame(scope);
+            flashLine(scope);
+        },
+        undo: scope => newFrame(scope, 12, true),
+    },
+    // Finished.
+    {
+        forward: scope => {
+            popFrame(scope);
+        },
+        undo: scope => newFrame(scope, 5, true),
+    },
 ]
 
 
@@ -407,10 +415,6 @@ function popFrame(scope) {
     }
 }
 
-function popAndAdvance(scope) {
-    popFrame(scope);
-    nextLine(scope);
-}
 
 function newFrame(scope, newNode, restore) {
     let prevNode;
@@ -446,9 +450,8 @@ function newFrame(scope, newNode, restore) {
     elem
         .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
             (e) => {
-                $(this).off(e);
                 if (e.target === e.currentTarget) {
-                    if (e.target.classList.contains("delete")) {
+                    if (e.target.classList.contains(Node.DELETE)) {
                         elem.remove();
                     } else {
                         const activate = nodeId === scope.stack[scope.stack.length - 1].nodeId;
@@ -486,24 +489,46 @@ function highlightLine(pre, lineNum) {
     func();
 }
 
-function prevStep() {
-    stepIdx--;
-    const {
-        undo
-    } = steps[stepIdx];
-    undo();
-    $('#progress').val(stepIdx);
-    $('#step').text(`Current step: ${stepIdx} out of ${steps.length}`);
+function flashLine(scope) {
+    const curr = scope.stack[scope.stack.length - 1];
+    // adds a css animated flash to the current line to indicate that the line has just received a return value from a popped frame.
+    curr.getFrame().find('.line-highlight').addClass("flash");
 }
 
-function nextStep() {
+function prevStep(scope) {
+    const {
+        container,
+        toExecute: steps
+    } = scope;
+    scope.stepIdx--;
+    const {
+        undo
+    } = steps[scope.stepIdx];
+    undo(scope);
+    container.find('#progress').val(scope.stepIdx);
+    container.find('#step').text(`Step: ${scope.stepIdx} out of ${steps.length}`);
+    if (scope.stepIdx === 0) {
+        container.find("button#prev").prop('disabled', true);
+    } 
+    container.find("button#next").prop('disabled', false);
+}
+
+function nextStep(scope) {
+    const {
+        container,
+        toExecute: steps
+    } = scope;
     const {
         forward
-    } = steps[stepIdx];
-    forward();
-    stepIdx++;
-    $('#progress').val(stepIdx);
-    $('#step').text(`Current step: ${stepIdx} out of ${steps.length}`);
+    } = steps[scope.stepIdx];
+    forward(scope);
+    scope.stepIdx++;
+    container.find('#progress').val(scope.stepIdx);
+    container.find('#step').text(`Step: ${scope.stepIdx} out of ${steps.length}`);
+    if (scope.stepIdx === steps.length) {
+        container.find("button#next").prop('disabled', true);
+    }
+    container.find("button#prev").prop('disabled', false);
 }
 
 function makeTree() {
@@ -573,7 +598,7 @@ function makeTree() {
         </pattern>
     </defs>
     <svg x="80%">
-        <g id="graph0" class="graph" transform="translate(0, 280) scale(0.8 0.8) rotate(0)">
+        <g id="graph0" class="graph" transform="translate(0, 265) scale(.9 .9) rotate(0)">
             <title>G</title>
             <!-- 5 -->
             <g id="node1" class="node">

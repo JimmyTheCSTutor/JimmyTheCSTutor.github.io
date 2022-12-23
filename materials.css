@@ -14,8 +14,8 @@
   background: #dfdfdfa8;
 }
 
-.suspended {
-  animation: blinkingBackground 3s infinite;
+.flash {
+  animation: blinkingBackground 1.5s 1;
 }
 
 .frame-container {
@@ -50,8 +50,8 @@ path.connector {
 }
 
 .node-fill.active {
-  fill: #429c38aa;
-  stroke: #429c38aa;
+  /* fill: #429c38aa; */
+  /* stroke: #429c38aa; */
 }
 
 .node-outline.active {
@@ -164,15 +164,15 @@ pre[class*=language-].line-numbers {
 @keyframes blinkingBackground {
 
   0% {
-    background-color: #dfdfdfa8;
+    background-color: #429c3811;
   }
 
   50% {
-    background-color: #dfdfdf00;
+    background-color: #429c38e5;
   }
 
   100% {
-    background-color: #dfdfdfa8;
+    background-color: #429c38aa;
   }
 }
 
