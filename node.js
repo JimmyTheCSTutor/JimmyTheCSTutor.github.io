@@ -7,7 +7,7 @@ class Node {
     static LEFT = "L";
     static RIGHT = "R";
     static DELETE = "delete";
-    constructor(nodeId) {
+    constructor(nodeId, container, animationCount) {
         this.nodeId = nodeId;
         this.lineIdx = 0; // Each frame already starts at line #2.
         if (typeof nodeId === "string") {
@@ -15,6 +15,8 @@ class Node {
         } else {
             this.lines = [1, 2, 5, 6, 7];
         }
+        this.container = container;
+        this.animationCount = animationCount;
     }
 
     getCurrentLineNumber() {
@@ -53,11 +55,11 @@ class Node {
 
     // DOM selectors for this node.
     getFrame() {
-        return $(`#frame-${this.nodeId}-container`);
+        return this.container.find(`#frame-${this.nodeId}-container`);
     }
 
     getGraphNode() {
-        return $(`.node > title:contains(${this.nodeId})`).parent();
+        return this.container.find(`.node > title:contains(${this.nodeId})`).parent();
     }
 
     getGraphNodeFill() {
@@ -65,11 +67,11 @@ class Node {
     }
 
     getConnector() {
-        return $(`#connector-${this.nodeId}`);
+        return this.container.find(`#connector-${this.nodeId}`);
     }
 
     getNull() {
-        return $(`text#${this.nodeId}`);
+        return this.container.find(`text#${this.nodeId}`);
     }
 
     // Manipulate DOM according to state.
@@ -132,15 +134,12 @@ class Node {
     }
 
     connect(activate) {
-        // TODO: change this to the per-animation container
-        const parent = $('.animation-container');
         const {
             top: parentTop,
             left: parentLeft,
-        } = parent.offset();
+        } = this.container.offset();
 
         const root = this.getFrame().find(".root-cell");
-        // const root = this.getFrame()[0];
         let {
             left: elemLeft,
             top: elemTop,
@@ -168,7 +167,7 @@ class Node {
         startX = startX + X_BUFFER;
         startY = startY + 5;
         nodeY += Y_BUFFER;
-        nodeX = nodeX - X_BUFFER;
+        nodeX = nodeX - (X_BUFFER / 2);
 
         const midX = startX + (nodeX - startX) / 2;
         const points = [
@@ -179,7 +178,7 @@ class Node {
         ]
 
         const c = activate ? "connector active" : 'connector';
-        const g = d3.select("#svg_output").append("g").attr("class", c).attr("id", `connector-${this.nodeId}`);
+        const g = d3.select(`#svg_output_${this.animationCount}`).append("g").attr("class", c).attr("id", `connector-${this.nodeId}`);
 
         g.append("path")
             .attr("class", "connector")
@@ -200,7 +199,7 @@ class Node {
     destroy() {
         const frame = this.getFrame();
         frame.addClass(Node.DELETE);
-        $(`#connector-${this.nodeId}`).remove();
+        this.getConnector().remove();
         this.markGraphNode(Node.VISITED);
         // frame.remove();
     }
@@ -208,7 +207,7 @@ class Node {
     // reset all the state about this node.
     resetState() {
         const frame = this.getFrame();
-        $(`#connector-${this.nodeId}`).remove();
+        this.getConnector().remove();
         frame.remove();
         this.markGraphNode();
     }
@@ -234,14 +233,23 @@ class Node {
 </div>
 </div>`);
 
+        elem.hover((e) => {
+            if ($(e.currentTarget).attr("id") === `frame-${this.nodeId}-container`) {
+                $(e.currentTarget).css({zIndex: 100});
+            }
+        }, (e) => {
+            if ($(e.currentTarget).attr("id") === `frame-${this.nodeId}-container`) {
+                $(e.currentTarget).css({zIndex: "auto"});
+            }
+        });
+
         // TODO: remove the hard-coding of 150 and 80 and make them relative to width of the viewport.
+        const width = this.container.width();
         elem.css({
-            left: `${(counter) * 150 + 30}px`,
-            top: `${(counter) * 80 + 30}px`
+            left: `${(counter) * (width * .125) + 30}px`,
+            top: `${(counter) * 60 + 30}px`
         });
         this.advance(); // lineIdx always points to the NEXT line of code to be executed.
-
-
         return elem;
     }
 }

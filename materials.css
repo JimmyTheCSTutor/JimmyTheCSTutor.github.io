@@ -2,6 +2,7 @@
   position: relative;
   width: 80%;
   margin: 0 auto;
+  margin-top: 30px;
 }
 
 
@@ -101,7 +102,7 @@ pre[class*=language-].line-numbers {
 .frame>pre {
   background: #fffffe;
   border-right: 2px solid #dfdfdfa8;
-  font-size: 14px;
+  font-size: 13px;
   margin: 0;
   padding-bottom: 0;
   flex-grow: 1.5;
@@ -118,6 +119,7 @@ pre[class*=language-].line-numbers {
   border: 2px solid #dfdfdfa8;
   position: absolute;
   width: 27.5%;
+  min-width: 260px;
   overflow-x: hidden;
 }
 
@@ -201,6 +203,7 @@ text.null.active {
   justify-content: center;
   padding: 1.25rem 0.75rem;
   font-size: 14px;
+  background: white;
 }
 
 
@@ -245,7 +248,7 @@ tr.first-row td {
   margin-top: 15px;
   outline: none;
   transition: opacity .2s;
-  width: 100%;
+  width: 60%;
 
   /* Override default CSS styles */
   /* Full-width */
