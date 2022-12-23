@@ -203,7 +203,8 @@ text.null.active {
   justify-content: center;
   padding: 1.25rem 0.75rem;
   font-size: 14px;
-  background: white;
+  /* background: white; */
+  /* opacity: 0%; */
 }
 
 

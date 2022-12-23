@@ -233,17 +233,20 @@ class Node {
 </div>
 </div>`);
 
-        elem.hover((e) => {
-            if ($(e.currentTarget).attr("id") === `frame-${this.nodeId}-container`) {
-                $(e.currentTarget).css({zIndex: 100});
-            }
-        }, (e) => {
-            if ($(e.currentTarget).attr("id") === `frame-${this.nodeId}-container`) {
-                $(e.currentTarget).css({zIndex: "auto"});
-            }
-        });
+        // elem.hover((e) => {
+        //     const target = $(e.currentTarget);
+        //     if (target.attr("id") === `frame-${this.nodeId}-container`) {
+        //         target.css({zIndex: 100});
+        //         target.find(".variables").css({background: "white"});
+        //     }
+        // }, (e) => {
+        //     const target = $(e.currentTarget);
+        //     if (target.attr("id") === `frame-${this.nodeId}-container`) {
+        //         target.css({zIndex: "auto"});
+        //         target.find(".variables").css({background: "transparent"});
+        //     }
+        // });
 
-        // TODO: remove the hard-coding of 150 and 80 and make them relative to width of the viewport.
         const width = this.container.width();
         elem.css({
             left: `${(counter) * (width * .125) + 30}px`,

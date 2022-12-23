@@ -7,6 +7,30 @@ const wrapFunction = function (fn, context, params) {
     }
 }
 
+function advance(e) {
+    const curr = parseInt(e.target.value);
+
+    // stepIdx is always +1 of the step that was executed.
+    if (curr > this.stepIdx) {
+        for (let i = this.stepIdx; i < curr; i++) {
+            const {
+                forward
+            } = this.toExecute[i];
+            forward();
+        }
+    } else {
+        for (let i = this.stepIdx - 1; i >= curr; i--) {
+            const {
+                undo
+            } = this.toExecute[i];
+            undo();
+        }
+    }
+    this.stepIdx = curr;
+
+    this.container.find('#step').text(`Step ${this.stepIdx} out of ${this.toExecute.length}`);
+}
+
 // Renders a new row for the DFS animation, restricted to the given range of steps (start, end)
 const renderAnimation = function (start, end) {
     // First create an animation container.
@@ -72,26 +96,6 @@ const renderAnimation = function (start, end) {
         <div id="step">Step 0 out of ${toExecute.length}</div>`
     );
 
-    function advance(e) {
-        const curr = parseInt(e.target.value);
-
-        // stepIdx is always +1 of the step that was executed.
-        if (curr > this.stepIdx) {
-            for (let i = this.stepIdx; i < curr; i++) {
-                const { forward } = this.toExecute[i];
-                forward();
-            }
-        } else {
-            for (let i = this.stepIdx - 1; i >= curr; i--) {
-                const { undo } = this.toExecute[i];
-                undo();
-            }
-        }
-        this.stepIdx = curr;
-
-        this.container.find('#step').text(`Step ${this.stepIdx} out of ${this.toExecute.length}`);
-    }
-
     animationContainer.find('#progress').on("input", advance.bind(scope));
     animationCount += 1;
     return scope;
@@ -155,17 +159,16 @@ const steps = [
         forward: nextLine,
         undo: prevLine
     },
-    {
-        forward: popFrame,
-        undo: {
-            fn: newFrame,
-            params: ["L", true]
-        },
-    },
     // Back to Node 10
     {
-        forward: nextLine,
-        undo: prevLine
+        forward: popAndAdvance,
+        undo: () => {
+            console.log("In undo def in step: ", {
+                this: this
+            });
+            prevLine.call(this);
+            newFrame.call(this, "L", true);
+        }
     },
     // Null (Node 10.right)
     {
@@ -484,6 +487,11 @@ function popFrame() {
     }
 }
 
+function popAndAdvance() {
+    popFrame.call(this);
+    nextLine.call(this);
+}
+
 // Challenge: each newFrame needs to know what DOM element to append the frame to. right now newFrame always appends to '.frame-container'
 // The challenge now is that I have a singular steps array which all new animations will "splice" from. How do I 
 //  Also: will the top + left positions of the frames work within this new model? (It should...)
@@ -535,6 +543,8 @@ function newFrame(newNode, restore) {
 
     return n;
 }
+
+
 
 function prevLine() {
     const curr = this.stack[this.stack.length - 1];
