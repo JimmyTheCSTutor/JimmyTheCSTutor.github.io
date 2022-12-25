@@ -471,26 +471,12 @@ dfs(root)
             <button id="prevTreeNode" onclick="prevTreeNode()" disabled="true">&lt;</button>
             <input type="range" min="0" max="6" value="0" class="slider" id="tree-animation-progress">
             <button id="nextTreeNode" onclick="nextTreeNode()">></button>
-            <div id="tree-step">Step 0 out of 6</div>`
+            <div id="tree-step">Step 0 out of 6</div>
         </div>
-
-
-        <!-- 
-            I want to: implement an interactive (meaning, user can control each step) animation of how each line of code in the Python definition of the tree we will be traversing via DFS maps to creating the visual representation of the tree.
-
-            1. Isolate the SVG definitions for each node. Let's create the slider first for executing each step because that is the most tangible piece of user interface that can lead to progress.
-         -->
     </div>
 </body>
 
 <script>
-
-    d3.selection.prototype.appendSVG = function (SVGString) {
-        return this.select(function () {
-            return this.appendChild(document.importNode(new DOMParser()
-                .parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + SVGString + '</svg>', 'application/xml').documentElement.firstChild, true));
-        });
-    };
 
 
     const svgNodes = [
@@ -724,16 +710,24 @@ dfs(root)
 
     // each step forward should draw a node, and possibly an edge. Only leaf nodes do not edges.
     function nextTreeNode() {
-        $('#tree-animation-graph').append(svgNodes[n]);
+        let line;
         n++;
-        $('#tree-step').text(`Step ${n} out of 6`);
-        $(".dfs-tree-animation").html($(".dfs-tree-animation").html());
-        $('#tree-animation-progress').val(n);
 
+        if (n <= 6) {
+            $('#tree-animation-graph').append(svgNodes[n - 1]);
+            $(".dfs-tree-animation").html($(".dfs-tree-animation").html());
+            line = n + 7;
+            if (n === 6) {
+                line = n + 8;
+            }
+        }
+        $('#tree-step').text(`Step ${n} out of 6`);
+
+        $('#tree-animation-progress').val(n);
         // highlight the next line
         // set the new data-line attribute for pre
         const pre = $('.animated-tree-snippet');
-        pre[0].setAttribute('data-line', n + 7);
+        pre[0].setAttribute('data-line', line);
         // delete the current line-height class.
         $(pre).find('.line-highlight').remove();
 
@@ -741,30 +735,32 @@ dfs(root)
         func();
 
         $('#prevTreeNode').prop('disabled', n === 0);
-        $('#nextTreeNode').prop('disabled', n === svgNodes.length);
+        $('#nextTreeNode').prop('disabled', n === 6);
     }
 
     function prevTreeNode() {
-
-        // map the undo # of each step to the node to be removed.
         const toRemoveId = ids[n - 1];
         toRemoveId.forEach(e => {
             d3.select(`#tree-animation-graph #${e}`).remove();
         })
-        n--;
-        $('#tree-step').text(`Step ${n} out of 6`);
-        $('#tree-animation-progress').val(n);
 
         const pre = $('.animated-tree-snippet');
-        pre[0].setAttribute('data-line', n + 7);
+        const currLine = parseInt(pre.attr("data-line"));
+        const line = n === 6 ? currLine - 2 : currLine - 1;
+        pre[0].setAttribute('data-line', line);
         // delete the current line-height class.
         $(pre).find('.line-highlight').remove();
 
         var func = Prism.plugins.lineHighlight.highlightLines(pre[0]);
         func();
 
+        n--;
+        $('#tree-step').text(`Step ${n} out of 6`);
+        $('#tree-animation-progress').val(n);
+
+
         $('#prevTreeNode').prop('disabled', n === 0);
-        $('#nextTreeNode').prop('disabled', n === svgNodes.length);
+        $('#nextTreeNode').prop('disabled', n === 6);
     }
 
     function advanceTreeNode(e) {
@@ -781,11 +777,6 @@ dfs(root)
             }
         }
         n = curr;
-
-        $('#prevTreeNode').prop('disabled', n === 0);
-        $('#nextTreeNode').prop('disabled', n === svgNodes.length);
-
-        $('#tree-step').text(`Step ${n} out of 6`);
     }
 
     $('#tree-animation-progress').on("input", advanceTreeNode);
