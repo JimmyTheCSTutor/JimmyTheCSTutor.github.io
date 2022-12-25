@@ -8,7 +8,7 @@ const wrapFunction = function (fn, context, params) {
 }
 
 
-function advance(e) {
+function advanceStep(e) {
     const curr = parseInt(e.target.value);
 
     // stepIdx is always +1 of the step that was executed.
@@ -28,6 +28,9 @@ function advance(e) {
         }
     }
     this.stepIdx = curr;
+
+    this.container.find("button#prev").prop('disabled', this.stepIdx === 0);
+    this.container.find("button#next").prop('disabled', this.stepIdx === this.toExecute.length);
 
     this.container.find('#step').text(`Step ${this.stepIdx} out of ${this.toExecute.length}`);
 }
@@ -79,7 +82,7 @@ const renderAnimation = function (start, end) {
         <div id="step">Step 0 out of ${toExecute.length}</div>`
     );
 
-    animationContainer.find('#progress').on("input", advance.bind(scope));
+    animationContainer.find('#progress').on("input", advanceStep.bind(scope));
     animationContainer.find('button#prev').on("click", () => prevStep(scope));
     animationContainer.find('button#next').on("click", () => nextStep(scope));
     animationCount += 1;
@@ -335,13 +338,16 @@ const steps = [
     {
         forward: scope => {
             popFrame(scope);
-            nextLine(scope);
+            flashLine(scope);
         },
         undo: scope => {
-            prevLine(scope);
             newFrame(scope, "L", true);
         },
     }, // // Back to 8
+    {
+        forward: nextLine,
+        undo: prevLine,
+    },
     // Null (node.8 right)
     {
         forward: scope => newFrame(scope, "R"),
@@ -447,19 +453,19 @@ function newFrame(scope, newNode, restore) {
     scope.stack.push(n);
 
     // Add event listeners so necessary Javascript executes when animations end.
-    elem
-        .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
-            (e) => {
-                if (e.target === e.currentTarget) {
-                    if (e.target.classList.contains(Node.DELETE)) {
-                        elem.remove();
-                    } else {
-                        const activate = nodeId === scope.stack[scope.stack.length - 1].nodeId;
-                        n.connect(activate);
-                    }
-                }
+    // elem
+    //     .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
+    //         (e) => {
+    //             if (e.target === e.currentTarget) {
+    //                 if (e.target.classList.contains(Node.DELETE)) {
+    //                     elem.remove();
+    //                 } else {
+    //                     const activate = nodeId === scope.stack[scope.stack.length - 1].nodeId;
+    //                     n.connect(activate);
+    //                 }
+    //             }
 
-            });
+    //         });
 
     return n;
 }
@@ -507,10 +513,9 @@ function prevStep(scope) {
     undo(scope);
     container.find('#progress').val(scope.stepIdx);
     container.find('#step').text(`Step: ${scope.stepIdx} out of ${steps.length}`);
-    if (scope.stepIdx === 0) {
-        container.find("button#prev").prop('disabled', true);
-    } 
-    container.find("button#next").prop('disabled', false);
+
+    container.find("button#prev").prop('disabled', scope.stepIdx === 0);
+    container.find("button#next").prop('disabled', scope.stepIdx === steps.length);
 }
 
 function nextStep(scope) {
@@ -525,10 +530,8 @@ function nextStep(scope) {
     scope.stepIdx++;
     container.find('#progress').val(scope.stepIdx);
     container.find('#step').text(`Step: ${scope.stepIdx} out of ${steps.length}`);
-    if (scope.stepIdx === steps.length) {
-        container.find("button#next").prop('disabled', true);
-    }
-    container.find("button#prev").prop('disabled', false);
+    container.find("button#prev").prop('disabled', scope.stepIdx === 0);
+    container.find("button#next").prop('disabled', scope.stepIdx === steps.length);
 }
 
 function makeTree() {

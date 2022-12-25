@@ -223,7 +223,7 @@ class Node {
             const paths = this.container.find(`#${edgeId} path`);
             paths.css({stroke: "#dfdfdfa8", fill: "#dfdfdfa8"});
         }
-        // frame.remove();
+        frame.remove();
     }
 
     // reset all the state about this node.
@@ -272,7 +272,7 @@ class Node {
         const width = this.container.width();
         elem.css({
             left: `${(counter) * (width * .125) + 30}px`,
-            top: `${(counter) * 60 + 30}px`
+            top: `${(counter) * 60}px`
         });
         this.advance(); // lineIdx always points to the NEXT line of code to be executed.
         return elem;
