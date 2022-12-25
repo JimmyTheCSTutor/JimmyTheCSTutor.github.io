@@ -25,6 +25,7 @@ p {
     border-radius: 10px;
     padding-bottom: .25em;
     background: #fffffe;
+    font-size: 13px;
 }
 
 #tree-snippet {
