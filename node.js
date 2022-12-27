@@ -271,8 +271,8 @@ class Node {
 
         const width = this.container.width();
         elem.css({
-            left: `${(counter) * (width * .125) + 30}px`,
-            top: `${(counter) * 60}px`
+            left: `${(counter) * (width * .125) + 20}px`,
+            top: `${(counter) * 60 + 20}px`
         });
         this.advance(); // lineIdx always points to the NEXT line of code to be executed.
         return elem;

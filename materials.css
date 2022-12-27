@@ -3,6 +3,14 @@
   width: 90%;
   margin: 0 auto;
   margin-top: 30px;
+  border: 2px solid #ecc998;
+  border-radius: 5px;
+  background: #fff3e2;
+}
+
+.play-row {
+  border-top:2px solid #ecc998; 
+  padding: .3em 0em;
 }
 
 .line-highlight {
@@ -98,33 +106,37 @@ pre[class*=language-].line-numbers {
 }
 
 
-.frame>pre {
+.frame>pre,
+.snippet>pre {
   background: #fffffe;
-  border-right: 2px solid #dfdfdfa8;
+
   font-size: 13px;
   margin: 0;
   padding-bottom: 0;
   flex-grow: 1.5;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
-.frame.active>pre {
-  border-right: 2px solid #429c38aa;
+.frame.active .variables {
+  border-left: 2px solid #429c38aa;
 }
 
-.frame {
-  animation: append-animate .3s linear;
+.frame,
+.snippet {
   border-radius: 10px;
   border: 2px solid #dfdfdfa8;
-  position: absolute;
   width: 27.5%;
   min-width: 260px;
   overflow-x: hidden;
 }
 
+.frame {
+  animation: append-animate .3s linear;
+  position: absolute;
+}
+
 .frame.active {
   border: 2px solid #429c38aa;
-  /* animation: blinkingBorder 2s infinite linear; */
 }
 
 .frame.delete {
@@ -175,21 +187,6 @@ pre[class*=language-].line-numbers {
   }
 }
 
-@keyframes blinkingBorder {
-
-  0% {
-    border-color: #429c3855;
-  }
-
-  50% {
-    border-color: #429c38ff;
-  }
-
-  100% {
-    border-color: #429c3855;
-  }
-}
-
 
 text.null.active {
   fill: #429c38aa;
@@ -200,6 +197,7 @@ text.null.active {
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  border-left: 2px solid #dfdfdfa8;
   padding: 1.25rem 0.75rem;
   font-size: 14px;
   /* background: white; */
@@ -216,6 +214,10 @@ table.variable-grid {
   border-spacing: 0;
 }
 
+.variables tr {
+  border-bottom: 1px solid silver;
+}
+
 .variables td {
   text-align: right;
 }
@@ -224,9 +226,6 @@ table.variable-grid {
   border-right: 1px solid silver;
 }
 
-tr.first-row td {
-  border-bottom: 1px solid silver;
-}
 
 .variables td {
   padding: .3em;
@@ -242,27 +241,17 @@ tr.first-row td {
   -webkit-appearance: none;
   -webkit-transition: .2s;
   appearance: none;
-  background: #d3d3d3;
-  height: 25px;
-  opacity: 0.7;
-  margin-top: 15px;
+  background: #ccc;
   outline: none;
+  opacity: 0.7;
   transition: opacity .2s;
-  width: 60%;
-
-  /* Override default CSS styles */
-  /* Full-width */
-  /* Specified height */
-  /* Grey background */
-  /* Remove outline */
-  /* Set transparency (for mouse-over effects on hover) */
-  /* 0.2 seconds transition on hover */
+  flex-grow: 2;
+  line-height: normal;
 }
 
 /* Mouse-over effects */
 .slider:hover {
   opacity: 1;
-
   /* Fully shown on mouse-over */
 }
 
@@ -274,7 +263,6 @@ tr.first-row td {
   cursor: pointer;
   height: 25px;
   width: 25px;
-
   /* Override default look */
   /* Set a specific slider handle width */
   /* Slider handle height */
@@ -292,4 +280,8 @@ tr.first-row td {
   /* Slider handle height */
   /* Green background */
   /* Cursor on hover */
+}
+
+.slider-container {
+  width: 60%;
 }

@@ -1,9 +1,197 @@
+// variables for keeping of the state of the tree animation.
+// the index of the NEXT step to execute.
+let n = 0;
+
+const ids = [
+    ["node2"],
+    ["node5"],
+    ["node6"],
+    ["node4", "edge5"],
+    ["edge3", "edge4", "node3"],
+    ["node1", "edge1", "edge2"]
+];
+
+const nodeIds = ["node2", "node5", "node6", "node4", "node3", "node1"];
+
+const variables = ["ten", "eight", "nine", "six", "twelve", "root"];
+
+
+// each step forward should draw a node, and possibly an edge. Only leaf nodes do not edges.
+function nextTreeNode() {
+
+    let line;
+    n++;
+
+    if (n <= 6) {
+        const toShow = ids[n - 1];
+        toShow.forEach(e => {
+            $(`#tree-animation-graph #${e}`).addClass("shown");
+        })
+        line = n + 7;
+        if (n === 6) {
+            line = n + 8;
+        }
+    }
+    addVariableAndConnect();
+    $('#tree-step').text(`Step ${n} out of 6`);
+
+    $('#tree-animation-progress').val(n);
+    // highlight the next line
+    // set the new data-line attribute for pre
+    const pre = $('.animated-tree-snippet');
+    pre[0].setAttribute('data-line', line);
+    // delete the current line-height class.
+    $(pre).find('.line-highlight').remove();
+
+    var func = Prism.plugins.lineHighlight.highlightLines(pre[0]);
+    func();
+
+    $('#prevTreeNode').prop('disabled', n === 0);
+    $('#nextTreeNode').prop('disabled', n === 6);
+}
+
+function prevTreeNode() {
+    const toRemoveId = ids[n - 1];
+    toRemoveId.forEach(e => {
+        $(`#tree-animation-graph #${e}`).removeClass('shown');
+    })
+
+    const pre = $('.animated-tree-snippet');
+    const currLine = parseInt(pre.attr("data-line"));
+    const line = n === 6 ? currLine - 2 : currLine - 1;
+    pre[0].setAttribute('data-line', line);
+    // delete the current line-height class.
+    $(pre).find('.line-highlight').remove();
+
+    var func = Prism.plugins.lineHighlight.highlightLines(pre[0]);
+    func();
+
+    n--;
+    removeVariableAndConnectLine();
+    $('#tree-step').text(`Step ${n} out of 6`);
+    $('#tree-animation-progress').val(n);
+
+
+    $('#prevTreeNode').prop('disabled', n === 0);
+    $('#nextTreeNode').prop('disabled', n === 6);
+}
+
+function advanceTreeNode(e) {
+    const curr = parseInt(e.target.value);
+
+    // stepIdx is always +1 of the step that was executed.
+    if (curr > n) {
+        for (let i = n; i < curr; i++) {
+            nextTreeNode();
+        }
+    } else {
+        for (let i = n - 1; i >= curr; i--) {
+            prevTreeNode();
+        }
+    }
+    n = curr;
+}
+
+function addVariableAndConnect() {
+    const idx = n - 1;
+    const variable = variables[idx];
+
+    $(`#variable-row-${variable}`).addClass("shown");
+
+    // add conection line
+    const {
+        top: parentTop,
+        left: parentLeft,
+    } = $('#animated-dfs').offset();
+
+    const root = $('#animated-dfs').find(`.root-cell:eq(${idx})`);
+
+    let {
+        left: elemLeft,
+        top: elemTop,
+    } = root.offset();
+
+    // Make this a percentage of the total width / height of the connector.
+    let startX = elemLeft - parentLeft;
+    const height = root.height();
+    const top = elemTop - parentTop;
+
+    let startY = top + height / 2;
+
+    const graphNode = $('#tree-animation').find(`#${nodeIds[idx]}`);
+    let {
+        left: nodeX,
+        top: nodeY
+    } = graphNode.offset();
+
+    nodeX = nodeX - parentLeft;
+    nodeY = nodeY - parentTop;
+
+    const X_BUFFER = 10;
+    const Y_BUFFER = 15;
+
+    startX = startX + X_BUFFER;
+    startY = startY + 5;
+    nodeY += Y_BUFFER;
+    nodeX = nodeX;
+
+    const midX = startX + (nodeX - startX) / 2;
+    const points = [
+        [startX, startY],
+        [midX, startY],
+        [midX, nodeY],
+        [nodeX, nodeY]
+    ]
+
+    const g = d3.select(`#tree-animation`).append("g").attr("class", "connector").attr("id", `connector-${n}`);
+
+    g.append("path")
+        .attr("class", "connector")
+        .datum(points)
+        .attr("d", lineConstructor)
+
+    g
+        .append("circle")
+        .attr("cx", startX)
+        .attr("cy", startY)
+        .attr("r", 4)
+        .attr("fill", "white");
+}
+
+function removeVariableAndConnectLine() {
+    const variable = variables[n];
+
+    $(`#variable-row-${variable}`).removeClass("shown");
+    $(`#tree-animation`).find(`#connector-${n + 1}`).remove();
+
+}
+
 let animationCount = 0;
 
 
 const wrapFunction = function (fn, context, params) {
     return function () {
         fn.apply(context, params);
+    }
+}
+
+function playSteps() {
+    const {
+        start,
+        end,
+        container
+    } = this;
+
+    container.find(".play").prop('disabled', true);
+
+    const BUFFER = 650;
+    for (let i = 0; i < end - start; i++) {
+        setTimeout(() => {
+            nextStep(this);
+            if (i == end - start - 1) {
+                container.find("#play").prop('disabled', false);
+            }
+        }, i * BUFFER);
     }
 }
 
@@ -36,19 +224,19 @@ function advanceStep(e) {
 }
 
 // Renders a new row for the DFS animation, restricted to the given range of steps (start, end)
-const renderAnimation = function (start, end) {
+const renderAnimation = function (animationContainer, start, end) {
     // First create an animation container.
-    const animationContainer = $(`<div class="animation-container" id="animation-container-${animationCount}"></div>`);
 
     // Render the SVG tree.
     animationContainer.prepend(makeTree());
-    $('.container').append(animationContainer);
 
     const scope = {
         stepIdx: 0,
         stack: [],
         container: animationContainer,
         animationCount,
+        start,
+        end
     };
 
     // I essentially want an isolated context for this animation which contains its own
@@ -75,16 +263,26 @@ const renderAnimation = function (start, end) {
     scope["toExecute"] = toExecute;
 
     animationContainer.append(
-        `<button id="prev" disabled=${scope.stepIdx === 0}><</button>
-        <input type="range" min="0" max=${toExecute.length} value="0" class="slider" id="progress">
-		<button id="next">></button>
+        `<div class="play-row">
+            <div class="flex items-center">
+                <button class="play">Play</button>
+                <div class="mh3 slider-container flex items-center">
+                    <button id="prev" disabled=${scope.stepIdx === 0}><</button>
+                    <input type="range" min="0" max=${toExecute.length} value="0" class="slider" id="progress">
+                    <button id="next">></button>
+                </div>
+                <div id="step">Step 0 out of ${toExecute.length}</div>
+            </div>
+        </div>`
+    )
 
-        <div id="step">Step 0 out of ${toExecute.length}</div>`
-    );
 
     animationContainer.find('#progress').on("input", advanceStep.bind(scope));
+
+    animationContainer.find('button.play').on("click", playSteps.bind(scope));
     animationContainer.find('button#prev').on("click", () => prevStep(scope));
     animationContainer.find('button#next').on("click", () => nextStep(scope));
+
     animationCount += 1;
     return scope;
 }
@@ -366,7 +564,7 @@ const steps = [
         forward: scope => {
             popFrame(scope);
             flashLine(scope);
-            
+
         },
         undo: scope => {
             newFrame(scope, "R", true);
@@ -453,19 +651,19 @@ function newFrame(scope, newNode, restore) {
     scope.stack.push(n);
 
     // Add event listeners so necessary Javascript executes when animations end.
-    // elem
-    //     .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
-    //         (e) => {
-    //             if (e.target === e.currentTarget) {
-    //                 if (e.target.classList.contains(Node.DELETE)) {
-    //                     elem.remove();
-    //                 } else {
-    //                     const activate = nodeId === scope.stack[scope.stack.length - 1].nodeId;
-    //                     n.connect(activate);
-    //                 }
-    //             }
+    elem
+        .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
+            (e) => {
+                if (e.target === e.currentTarget) {
+                    // if (e.target.classList.contains(Node.DELETE)) {
+                    //     elem.remove();
+                    // } else {
+                    const activate = nodeId === scope.stack[scope.stack.length - 1].nodeId;
+                    n.connect(activate);
+                    // }
+                }
 
-    //         });
+            });
 
     return n;
 }
@@ -534,9 +732,9 @@ function nextStep(scope) {
     container.find("button#next").prop('disabled', scope.stepIdx === steps.length);
 }
 
-function makeTree() {
+function makeTree(height = 300) {
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%"
-    height="360px"
+    height="${height}px"
     id="svg_output_${animationCount}" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden; ">
     <defs>
         <pattern id="rough-5641711627558583" x="0" y="0" width="1" height="1" viewBox="0 0 14 28"
@@ -601,7 +799,7 @@ function makeTree() {
         </pattern>
     </defs>
     <svg x="80%">
-        <g id="graph0" class="graph" transform="translate(0, 265) scale(.9 .9) rotate(0)">
+        <g id="graph0" class="graph" transform="translate(0, 240) scale(.9 .9) rotate(0)">
             <title>G</title>
             <!-- 5 -->
             <g id="node1" class="node">

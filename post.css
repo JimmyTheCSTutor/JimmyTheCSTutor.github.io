@@ -20,13 +20,6 @@ p {
     margin: 0 auto;
 }
 
-.snippet > pre {
-    border: 2px solid #dfdfdfa8;
-    border-radius: 10px;
-    padding-bottom: .25em;
-    background: #fffffe;
-    font-size: 13px;
-}
 
 #tree-snippet {
     font-size: 13px;
@@ -42,6 +35,32 @@ p {
     left: 0;
 }
 
+.dfs-tree-animation .variables {
+    padding: 1.25rem 1.75rem;
+    font-size: 13px;
+}
+
 #tree-animation-controls {
     margin-top: 30px;
+}
+
+.variable-row {
+    visibility: hidden;
+}
+
+.variable-row.shown {
+    visibility: initial;
+    border-bottom: 1px solid silver;
+}
+
+#tree-animation-graph .node, #tree-animation-graph .edge {
+    visibility: hidden;
+}
+
+#tree-animation-graph .shown {
+    visibility: initial;
+}
+
+button.play {
+    margin-left: 20px;
 }
