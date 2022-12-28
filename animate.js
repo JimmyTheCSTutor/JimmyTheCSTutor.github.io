@@ -189,9 +189,15 @@ function playSteps() {
         setTimeout(() => {
             nextStep(this);
             if (i == end - start - 1) {
-                container.find("#play").prop('disabled', false);
+                container.find(".play").prop('disabled', false);
             }
         }, i * BUFFER);
+    }
+}
+
+function resetSteps() {
+    for (let i = this.stepIdx; i > 0; i--) {
+        prevStep(this);
     }
 }
 
@@ -272,6 +278,7 @@ const renderAnimation = function (animationContainer, start, end) {
                     <button id="next">></button>
                 </div>
                 <div id="step">Step 0 out of ${toExecute.length}</div>
+                <button class="ml3 reset">Reset</button>
             </div>
         </div>`
     )
@@ -280,6 +287,7 @@ const renderAnimation = function (animationContainer, start, end) {
     animationContainer.find('#progress').on("input", advanceStep.bind(scope));
 
     animationContainer.find('button.play').on("click", playSteps.bind(scope));
+    animationContainer.find('button.reset').on("click", resetSteps.bind(scope));
     animationContainer.find('button#prev').on("click", () => prevStep(scope));
     animationContainer.find('button#next').on("click", () => nextStep(scope));
 
