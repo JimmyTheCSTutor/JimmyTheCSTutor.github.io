@@ -11,6 +11,10 @@ p, ol {
     line-height: 1.6;
 }
 
+.container p {
+    width: 75%;
+}
+
 .note {
     color: rgb(181, 41, 41);
 }

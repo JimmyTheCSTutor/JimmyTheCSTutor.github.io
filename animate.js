@@ -205,6 +205,7 @@ function resetSteps() {
     for (let i = this.stepIdx; i > 0; i--) {
         prevStep(this);
     }
+    this.container.find(".play").prop('disabled', false);
 }
 
 
