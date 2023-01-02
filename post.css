@@ -11,8 +11,12 @@ p, ol {
     line-height: 1.6;
 }
 
-.container p {
-    width: 75%;
+h2 {
+    margin-top: 2em;
+}
+
+.container p, .container ol {
+    width: 80%;
 }
 
 .note {
@@ -21,7 +25,6 @@ p, ol {
 
 .snippet {
     width: min-content;
-    margin: 0 auto;
 }
 
 

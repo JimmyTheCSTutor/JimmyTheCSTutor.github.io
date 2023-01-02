@@ -1,9 +1,11 @@
 .animation-container {
   position: relative;
-  margin: 2rem auto;
   border-radius: 5px;
   background: #fffcf691;
   border: 2px solid #fff3e2;
+  /* margin-top: 3em; */
+  margin-bottom: 2em;
+  width: 85%;
 }
 
 .play-row {

@@ -30,14 +30,10 @@
             control flow.
             Control flow refers to the sequence of instructions taken by a program as it executes. Understanding the
             control flow of recursive functions is challenging
-            because it requires tracking a larger number of details compared to the control flow of non-recursive
+            because it requires tracking a larger number of details compared to that of non-recursive
             functions. In my experience teaching recursion, I have found
             one method of visualizing recursion to be particularly effective. This post contains an interactive,
-            animated version of that visualization,
-            which we will use to learn the rules of recursive control flow. Those rules will help us accurately keep
-            track of all the details invovled in recursive control flow, and
-            are the basis of the techinques we will soon learn to help us solve our interview questions involving
-            recursion.
+            animated version of that visualization.
         </p>
         <h2>Binary Trees and Depth First Search</h2>
         <p>
@@ -45,7 +41,7 @@
             but we will learn about them exclusively in the context of depth-first search and binary trees.
             <a href="https://en.wikipedia.org/wiki/Depth-first_search">Depth-first search</a> is a recursive algorithm that systematically visits every node in a tree. Interview
             problems involving recursion and binary trees almost always require extending depth-first search in some
-            fashion. The version of depth-first search we will be working with in this visualization is as follows:
+            fashion. The version of depth-first search we will be working with in this visualization is below:
         </p>
 
         <div class="snippet line-numbers">
@@ -56,12 +52,12 @@
   dfs(node.left)
   dfs(node.right)</code>
           </pre>
-        </div>`
+        </div>
         <p>This is the simplest possible form of depth-first search. We will be
-            using it traverse this tree, constructed via the Python code on the right and represented graphically on the
+            using it to traverse the tree constructed via the Python code on the right and represented graphically on the
             left:</p>
 
-        <div class="displayTree flex">
+        <div class="displayTree flex justify-between">
 
             <div class="snippet line-numbers">
                 <pre class="tree-snippet" data-line="10"><code class="language-python">class Node(object):
@@ -367,7 +363,7 @@ dfs(root)</code></pre>
             to execute each line. Note the variables that show up in the panel to the right of the code snippet after
             each line of code completes, and how they map to the various nodes in the tree diagram.
 
-            Executing each step brings us to line 14, in which we are about to make our first call to
+            Executing each step in this snippet brings us to line 14, in which we are about to make our first call to
             <code>dfs(root)</code>.
 
 
@@ -697,14 +693,14 @@ dfs(root)</code></pre>
 
         <h2>The Rules of Recursive Flow Control</h2>
 
-        <h3>Frame Creation</h3>
+        <h3 class="mt4">Rule #1: Recursive Calls Create Frames</h3>
 
-        <div id="animation-container-0" class="animation-container"></div>
+        <div id="animation-container-0" class="mt2 animation-container"></div>
 
         <p>
             We start our visualization by creating a <b>frame</b> to represent the first call to <code>dfs(node)</code>.
-            A frame displays the current line of code being executed and the values of any local variables within that
-            call (displayed in the panel to the right of the code). Execution within this frame reaches line 5, where we
+            A frame maps to the execution of a single function call. It displays the current line of code being executed and the values of any local variables within that
+            call. Execution within this frame reaches line 5, where we
             encounter our first recursive call to
             <code>dfs(node.left)</code>.
         </p>
@@ -719,7 +715,7 @@ dfs(root)</code></pre>
             to <code>dfs(node.left)</code> on line 5 to complete before it can continue executing.
         </p>
 
-        <div id="animation-container-1" class="animation-container"></div>
+        <div id="animation-container-1" class="mt5 animation-container"></div>
 
         <p>Just as before, execution within the new active frame continues until line 5, which is another recursive call
             to <code>dfs(root.left)</code>. To execute this recursive call, we create a new
@@ -730,7 +726,7 @@ dfs(root)</code></pre>
 
         </p>
 
-        <h3>Return Statements: Popping Frames off the Call Stack</h3>
+        <h3 class="mt5">Return Statements: Popping Frames off the Call Stack</h3>
 
         <div id="animation-container-2" class="animation-container"></div>
 
@@ -750,7 +746,7 @@ dfs(root)</code></pre>
             so we create a new frame, push it to the top of the call stack, and make it active.
         </p>
 
-        <div id="animation-container-3" class="animation-container"></div>
+        <div id="animation-container-3" class="mt5 animation-container"></div>
 
         <p>
             The value of root is None within this new frame, so we reach the return statement on line 3. We pop the
@@ -768,8 +764,8 @@ dfs(root)</code></pre>
             subtre using the same rules for recursive control used to search the root's left
             subtree.
         </p>
-
-        <p>
+        ---
+        <p class="mt4">
             To recap, those rules are:
         <ol>
             <li>Whenever the active frame encounters a recursive call, a new frame is created, pushed to the top of
@@ -782,7 +778,9 @@ dfs(root)</code></pre>
                 call
                 stack. This next frame in the call stack becomes the active frame, and execution resumes within it.</li>
         </ol>
+        </p>
 
+        <p>
         The animation shows the steps for searching the root's entire right subtree. See if you can recognize when to
         apply the two rules
         above.
@@ -791,7 +789,7 @@ dfs(root)</code></pre>
         <div id="animation-container-4" class="animation-container"></div>
 
         <p>
-            Those two rules for recursive control flow are foundational - the techniques we are about to learn for
+            These two rules for recursive control flow are foundational - the techniques we are about to learn for
             solving recursive binary tree problems are based on the values we pass when pushing new frames onto the call
             stack, and the values we return when popping frames from the call stack.
 

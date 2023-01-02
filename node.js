@@ -189,7 +189,7 @@ class Node {
         const Y_BUFFER = 10;
 
         startX = startX + X_BUFFER;
-        startY = startY + 5;
+        startY = startY + 2.5;
         nodeY += (Y_BUFFER / 2);
         nodeX = nodeX - (X_BUFFER / 2);
 
