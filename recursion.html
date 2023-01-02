@@ -146,7 +146,7 @@ dfs(root)</code></pre>
                     </pattern>
                 </defs>
 
-                <g id="graph0" class="graph" transform="translate(0, 265) scale(.9 .9) rotate(0)">
+                <g id="graph0" class="graph" transform="translate(0, 250) scale(.9 .9) rotate(0)">
                     <title>G</title>
                     <!-- 5 -->
                     <g id="node1" class="node">
@@ -371,7 +371,7 @@ dfs(root)</code></pre>
             to execute each line - note the variables that show up in the panel to the right of the code snippet after
             each line of code completes, and how they map to the various nodes in the tree diagram.
 
-            Executing each step of this visualization leaves us at line 14, in which we are about to make our to call
+            Executing each step of this visualization brings us to line 14, in which we are about to make our to call
             <code>dfs(root)</code>.
         </p>
 
@@ -490,7 +490,7 @@ dfs(root)</code></pre>
                     </pattern>
                 </defs>
                 <svg x="70%">
-                    <g id="tree-animation-graph" class="graph" transform="translate(0, 265) scale(.9 .9) rotate(0)">
+                    <g id="tree-animation-graph" class="graph" transform="translate(0, 250) scale(.9 .9) rotate(0)">
                         <g id="node2" class="node">
                             <title>10</title>
                             <g>
@@ -695,39 +695,32 @@ dfs(root)</code></pre>
 
         </div>
 
-        <div id="tree-animation-controls">
+        <div id="tree-animation-controls" class="w-70 flex items-center">
             <button id="prevTreeNode" onclick="prevTreeNode()" disabled="true">&lt;</button>
             <input type="range" min="0" max="6" value="0" class="slider" id="tree-animation-progress">
             <button id="nextTreeNode" onclick="nextTreeNode()">></button>
             <div id="tree-step">Step 0 out of 6</div>
         </div>
 
-
         <h2>The Rules of Recursive Flow Control</h2>
 
-        <p>Step 0: We represent the initial call to <code>dfs(root)</code> by creating a frame for it. A frame
-            represents a single call to our recursive function, and it stores both the current instruction being
-            executed and the value of the local variables. The current instruction is highlighted in green, and the
-            frame’s local variables are displayed in the panel to the right
-            of the code. As we can see, the value of <code>node</code> within this frame is the root node of the tree,
-            the node with
-            value 5.</p>
+        <h3>Concept 1: Frame Creation</h3>
+
         <p>
-            Step 1/2: Execution with this frame reaches line 5, which contains our first recursive call to
-            <code>dfs(root.left)</code>.
+            We start our visualization by creating a <b>frame</b> to represent the first call to <code>dfs(node)</code>.
+            A frame displays the current line of code being executed and the values of any local variables within a
+            function call - we will create a new frame for each recursive call made during depth-first search.
+            Execution within this frame reaches line 5, where we encounter our first recursive call to
+            <code>dfs(node.left)</code>.
         </p>
         <p>
-            Step 3: Whenever we encounter a recursive call, we create a new frame to represent the execution
-            of that call, this time for the node with value 10. This new frame is pushed to the
-            top of the <span class="fw6">call stack.</span> The call stack is a <a
-                href="https://www.programiz.com/dsa/stack">stack data structure</a> containing all frames which have not
-            finished executing. Newly created frames are always pushed to the top of the call stack.
-
-            The newly created frame becomes the <b>active</b> frame (notice the green border), indicating that this
-            frame
-            is the only frame actively executing instructions. The border and current instruction highlight of the
-            previously active frame turn grey to indicate that it is “suspended“ - it is waiting for the recursive call
-            to <code>dfs(root.left)</code> on line 5 to complete and return a value before it can continue executing.
+            To represent this recursive call, we <b>create a new frame and push it to the top of the call stack</b>.
+            The call stack is a <a href="https://www.programiz.com/dsa/stack">stack data structure</a> containing all
+            frames which have not finished executing. The newly created frame becomes the <b>active</b> frame (green border), indicating this
+            frame is the only frame in our call stack which is actively executing instructions. The previously active
+            frame turns grey to indicate
+            that it is “suspended“ - i.e. it is waiting for the recursive call it made
+            to <code>dfs(node.left)</code> on line 5 to complete before it can continue executing.
         </p>
 
         <div id="animation-container-0" class="animation-container"></div>
@@ -766,10 +759,9 @@ dfs(root)</code></pre>
     $(document).ready(function () {
         $('#tree-animation-progress').on("input", advanceTreeNode);
 
-        renderAnimation($("#animation-container-0"), 1, 4);
-        renderAnimation($("#animation-container-1"), 4, 9);
+        renderAnimation($("#animation-container-0"), 1, 5);
+        renderAnimation($("#animation-container-1"), 5, 9);
         renderAnimation($("#animation-container-2"), 9, 12);
-        // renderAnimation(13, 17);
     });
 </script>
 

@@ -133,7 +133,7 @@ function addVariableAndConnect() {
     startX = startX + X_BUFFER;
     startY = startY + 5;
     nodeY += Y_BUFFER;
-    nodeX = nodeX;
+    // nodeX = nodeX - (X_BUFFER / 2);
 
     const midX = startX + (nodeX - startX) / 2;
     const points = [
@@ -163,7 +163,6 @@ function removeVariableAndConnectLine() {
 
     $(`#variable-row-${variable}`).removeClass("shown");
     $(`#tree-animation`).find(`#connector-${n + 1}`).remove();
-
 }
 
 let animationCount = 0;
@@ -176,15 +175,22 @@ const wrapFunction = function (fn, context, params) {
 }
 
 function playSteps() {
+    const BUFFER = 650;
     const {
         start,
         end,
-        container
+        container,
+        stepIdx,
+        toExecute
     } = this;
 
     container.find(".play").prop('disabled', true);
+    if (stepIdx === toExecute.length) {
+        resetSteps.call(this);
+        setTimeout(() => playSteps.call(this), BUFFER);
+        return;
+    }
 
-    const BUFFER = 650;
     for (let i = 0; i < end - start; i++) {
         setTimeout(() => {
             nextStep(this);
@@ -225,7 +231,6 @@ function advanceStep(e) {
 
     this.container.find("button#prev").prop('disabled', this.stepIdx === 0);
     this.container.find("button#next").prop('disabled', this.stepIdx === this.toExecute.length);
-
     this.container.find('#step').text(`Step ${this.stepIdx} out of ${this.toExecute.length}`);
 }
 
@@ -273,12 +278,12 @@ const renderAnimation = function (animationContainer, start, end) {
             <div class="flex items-center">
                 <button class="play">Play</button>
                 <div class="mh3 slider-container flex items-center">
-                    <button id="prev" disabled=${scope.stepIdx === 0}><</button>
-                    <input type="range" min="0" max=${toExecute.length} value="0" class="slider" id="progress">
-                    <button id="next">></button>
+                    <button class="dim step" id="prev" disabled=${scope.stepIdx === 0}><</button>
+                    <input type="range" min="0" max=${toExecute.length} value="0" class="slider pointer" id="progress">
+                    <button class="dim step" id="next">></button>
                 </div>
                 <div id="step">Step 0 out of ${toExecute.length}</div>
-                <button class="ml3 reset">Reset</button>
+                <button class="mr3 reset ml-auto">Reset</button>
             </div>
         </div>`
     )
@@ -663,12 +668,9 @@ function newFrame(scope, newNode, restore) {
         .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
             (e) => {
                 if (e.target === e.currentTarget) {
-                    // if (e.target.classList.contains(Node.DELETE)) {
-                    //     elem.remove();
-                    // } else {
-                    const activate = nodeId === scope.stack[scope.stack.length - 1].nodeId;
-                    n.connect(activate);
-                    // }
+                    if (e.target.classList.contains(Node.DELETE)) {
+                        elem.remove();
+                    }
                 }
 
             });
@@ -722,13 +724,16 @@ function prevStep(scope) {
 
     container.find("button#prev").prop('disabled', scope.stepIdx === 0);
     container.find("button#next").prop('disabled', scope.stepIdx === steps.length);
+    // container.find("button.play").prop('disabled', scope.stepIdx === steps.length);
 }
 
 function nextStep(scope) {
+
     const {
         container,
-        toExecute: steps
+        toExecute: steps,
     } = scope;
+
     const {
         forward
     } = steps[scope.stepIdx];
@@ -738,6 +743,7 @@ function nextStep(scope) {
     container.find('#step').text(`Step: ${scope.stepIdx} out of ${steps.length}`);
     container.find("button#prev").prop('disabled', scope.stepIdx === 0);
     container.find("button#next").prop('disabled', scope.stepIdx === steps.length);
+    // container.find("button.play").prop('disabled', scope.stepIdx === steps.length);
 }
 
 function makeTree(height = 300) {
@@ -745,6 +751,9 @@ function makeTree(height = 300) {
     height="${height}px"
     id="svg_output_${animationCount}" xmlns:ev="http://www.w3.org/2001/xml-events" style="overflow: hidden; ">
     <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" fill="currentColor" refX="0" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" />
+        </marker>
         <pattern id="rough-5641711627558583" x="0" y="0" width="1" height="1" viewBox="0 0 14 28"
             patternUnits="objectBoundingBox">
             <path

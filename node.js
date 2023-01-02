@@ -34,6 +34,10 @@ class Node {
     }
 
     advance() {
+        if (this.lineIdx === 1) {
+            this.getFrame().find('.first-row').removeClass('hidden');
+            this.connect();
+        }
         this.lineIdx++;
     }
 
@@ -44,6 +48,10 @@ class Node {
     retreat() {
         this.lineIdx--;
         this.lineIdx--;
+        if (this.lineIdx === 0) {
+            this.getConnector().remove();
+            this.getFrame().find('.first-row').addClass('hidden');
+        }
     }
 
     valid() {
@@ -88,7 +96,6 @@ class Node {
     activate() {
         const frame = this.getFrame();
         this.markGraphNode(Node.ACTIVE);
-        this.getConnector().addClass('active');
         frame.removeClass("inactive");
         frame.addClass("active");
         frame.find('.line-highlight').removeClass('inactive suspended');
@@ -106,7 +113,6 @@ class Node {
         frame.removeClass('active');
         frame.find('.line-highlight').addClass('inactive');
         frame.find('.line-highlight').removeClass('flash');
-        this.getConnector().removeClass('active');
         this.markGraphNode(Node.INACTIVE);
     }
 
@@ -150,7 +156,7 @@ class Node {
         }
     }
 
-    connect(activate) {
+    connect() {
         const {
             top: parentTop,
             left: parentLeft,
@@ -183,7 +189,7 @@ class Node {
 
         startX = startX + X_BUFFER;
         startY = startY + 5;
-        nodeY += Y_BUFFER;
+        nodeY += (Y_BUFFER / 2);
         nodeX = nodeX - (X_BUFFER / 2);
 
         const midX = startX + (nodeX - startX) / 2;
@@ -194,8 +200,8 @@ class Node {
             [nodeX, nodeY]
         ]
 
-        const c = activate ? "connector active" : 'connector';
-        const g = d3.select(`#svg_output_${this.animationCount}`).append("g").attr("class", c).attr("id", `connector-${this.nodeId}`);
+        // const c = activate ? "connector active" : 'connector';
+        const g = d3.select(`#svg_output_${this.animationCount}`).append("g").attr("class", "connector").attr("id", `connector-${this.nodeId}`);
 
         g.append("path")
             .attr("class", "connector")
@@ -216,14 +222,14 @@ class Node {
     destroy() {
         const frame = this.getFrame();
         frame.addClass(Node.DELETE);
-        this.getConnector().remove();
+        this.getConnector().remove();    
         this.markGraphNode(Node.VISITED);
         if (this.valid()) {
             const edgeId = edgeMap[this.nodeId];
             const paths = this.container.find(`#${edgeId} path`);
             paths.css({stroke: "#dfdfdfa8", fill: "#dfdfdfa8"});
         }
-        frame.remove();
+        // frame.remove();
     }
 
     // reset all the state about this node.
@@ -247,7 +253,7 @@ class Node {
 </pre>
 <div class="variables">
     <table class="variable-grid">
-        <tr class="first-row">
+        <tr class="first-row hidden">
             <td class="first-cell">node</td>
             <td class="root-cell"></td>
         </tr>

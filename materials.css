@@ -1,15 +1,13 @@
 .animation-container {
   position: relative;
-  width: 90%;
-  margin: 0 auto;
-  margin-top: 30px;
-  border: 2px solid #ecc998;
+  margin: 3rem auto;
   border-radius: 5px;
-  background: #fff3e2;
+  background: #fffcf691;
+  border: 2px solid #fff3e2;
 }
 
 .play-row {
-  border-top:2px solid #ecc998; 
+  border-top: 2px solid #fff3e2;
   padding: .5em 0em;
 }
 
@@ -56,11 +54,6 @@ path.connector {
   z-index: -1;
 }
 
-.node-fill.active {
-  /* fill: #429c38aa; */
-  /* stroke: #429c38aa; */
-}
-
 .node-outline.active {
   stroke: #429c38aa;
 }
@@ -94,13 +87,6 @@ g.visited {
   stroke: #cacdcf;
 }
 
-/* Should be the last rule so it overrides */
-g.active,
-g.active path,
-.connector.active circle {
-  stroke: #429c38aa;
-}
-
 pre[class*=language-].line-numbers {
   padding-left: 3.2em;
 }
@@ -131,7 +117,7 @@ pre[class*=language-].line-numbers {
 }
 
 .frame {
-  animation: append-animate .3s linear;
+  animation: append-animate .5s linear;
   position: absolute;
 }
 
@@ -149,11 +135,9 @@ pre[class*=language-].line-numbers {
   }
 
   100% {
-    width: 0;
-    transform: scale(0);
-    /* opacity: 0;
-    padding: 0;
-    margin: 0; */
+    /* width: 0; */
+    /* transform: scale(0); */
+    opacity: 0;
   }
 }
 
@@ -162,13 +146,13 @@ pre[class*=language-].line-numbers {
   from {
     border: 2px solid #429c38aa;
     opacity: 0;
-    transform: scale(0);
+    /* transform: scale(0); */
   }
 
   to {
     border: 2px solid #429c38aa;
     opacity: 1;
-    transform: scale(1);
+    /* transform: scale(1); */
   }
 }
 
@@ -198,10 +182,8 @@ text.null.active {
   align-items: flex-start;
   justify-content: center;
   border-left: 2px solid #dfdfdfa8;
-  padding: 1.25rem 0.75rem;
+  padding: 1rem 0.75rem;
   font-size: 14px;
-  /* background: white; */
-  /* opacity: 0%; */
 }
 
 
@@ -212,6 +194,11 @@ text.null.active {
 table.variable-grid {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+.variables tr.hidden, .variables tr.hidden td {
+  border-color: transparent;
+  visibility: hidden;
 }
 
 .variables tr {
@@ -257,31 +244,20 @@ table.variable-grid {
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
 .slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  background: #04AA6D;
+  /* -webkit-appearance: none; */
   cursor: pointer;
-  height: 25px;
   width: 25px;
-  /* Override default look */
-  /* Set a specific slider handle width */
-  /* Slider handle height */
-  /* Green background */
-  /* Cursor on hover */
 }
 
 .slider::-moz-range-thumb {
-  background: #04AA6D;
   cursor: pointer;
-  height: 25px;
   width: 25px;
-
-  /* Set a specific slider handle width */
-  /* Slider handle height */
-  /* Green background */
-  /* Cursor on hover */
 }
 
 .slider-container {
   width: 60%;
+}
+
+button.step {
+  font-size: 13px;
 }
