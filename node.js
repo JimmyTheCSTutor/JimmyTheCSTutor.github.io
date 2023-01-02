@@ -36,12 +36,12 @@ class Node {
     advance() {
         if (this.lineIdx === 1) {
             this.getFrame().find('.first-row').removeClass('hidden');
-            this.connect();
+            if (this.getConnector().length === 0) this.connect();
         }
         this.lineIdx++;
     }
 
-    restoreCounter() {
+    restore() {
         this.lineIdx = this.lines.length - 1;
     }
 
@@ -99,6 +99,7 @@ class Node {
         frame.removeClass("inactive");
         frame.addClass("active");
         frame.find('.line-highlight').removeClass('inactive suspended');
+        // frame.find('.first-row').removeClass('hidden');
 
         if (this.valid()) {
             const edgeId = edgeMap[this.nodeId];
@@ -260,21 +261,7 @@ class Node {
     </table>
 </div>
 </div>`);
-
-        // elem.hover((e) => {
-        //     const target = $(e.currentTarget);
-        //     if (target.attr("id") === `frame-${this.nodeId}-container`) {
-        //         target.css({zIndex: 100});
-        //         target.find(".variables").css({background: "white"});
-        //     }
-        // }, (e) => {
-        //     const target = $(e.currentTarget);
-        //     if (target.attr("id") === `frame-${this.nodeId}-container`) {
-        //         target.css({zIndex: "auto"});
-        //         target.find(".variables").css({background: "transparent"});
-        //     }
-        // });
-
+      
         const width = this.container.width();
         elem.css({
             left: `${(counter) * (width * .125) + 20}px`,

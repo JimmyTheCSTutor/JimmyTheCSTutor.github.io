@@ -96,7 +96,7 @@ function addVariableAndConnect() {
     const idx = n - 1;
     const variable = variables[idx];
 
-    $(`#variable-row-${variable}`).addClass("shown");
+    $(`#variable-row-${variable}`).removeClass("hidden");
 
     // add conection line
     const {
@@ -161,7 +161,7 @@ function addVariableAndConnect() {
 function removeVariableAndConnectLine() {
     const variable = variables[n];
 
-    $(`#variable-row-${variable}`).removeClass("shown");
+    $(`#variable-row-${variable}`).addClass("hidden");
     $(`#tree-animation`).find(`#connector-${n + 1}`).remove();
 }
 
@@ -235,11 +235,11 @@ function advanceStep(e) {
 }
 
 // Renders a new row for the DFS animation, restricted to the given range of steps (start, end)
-const renderAnimation = function (animationContainer, start, end) {
+const renderAnimation = function (animationContainer, start, end, height=300) {
     // First create an animation container.
 
     // Render the SVG tree.
-    animationContainer.prepend(makeTree());
+    animationContainer.prepend(makeTree(height));
 
     const scope = {
         stepIdx: 0,
@@ -278,9 +278,9 @@ const renderAnimation = function (animationContainer, start, end) {
             <div class="flex items-center">
                 <button class="play">Play</button>
                 <div class="mh3 slider-container flex items-center">
-                    <button class="dim step" id="prev" disabled=${scope.stepIdx === 0}><</button>
+                    <button class="step" id="prev" disabled=${scope.stepIdx === 0}><</button>
                     <input type="range" min="0" max=${toExecute.length} value="0" class="slider pointer" id="progress">
-                    <button class="dim step" id="next">></button>
+                    <button class="step" id="next">></button>
                 </div>
                 <div id="step">Step 0 out of ${toExecute.length}</div>
                 <button class="mr3 reset ml-auto">Reset</button>
@@ -645,12 +645,12 @@ function newFrame(scope, newNode, restore) {
     const n = new Node(nodeId, scope.container, scope.animationCount);
 
     // set current node active fill.
-    n.activate();
+    
 
     // if restoring this frame because we hit previous step, set the current line number
     // to the last line of the frame before creating it.
     if (restore) {
-        n.restoreCounter();
+        n.restore();
     }
 
     // append stack frame for newNode.
@@ -663,6 +663,8 @@ function newFrame(scope, newNode, restore) {
 
     scope.stack.push(n);
 
+    n.activate();
+
     // Add event listeners so necessary Javascript executes when animations end.
     elem
         .on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
@@ -674,6 +676,12 @@ function newFrame(scope, newNode, restore) {
                 }
 
             });
+        
+    
+    if (restore) {
+        n.getFrame().find('.first-row').removeClass('hidden');
+        n.connect();
+    }
 
     return n;
 }

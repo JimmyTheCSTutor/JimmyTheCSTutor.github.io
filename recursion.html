@@ -57,15 +57,14 @@
   dfs(node.right)</code>
           </pre>
         </div>`
-        <p>This is the simplest possible form of depth-first search <span class="note">[Should I address why? In that it
-                makes one call to dfs for each node in the tree, but does not further computation.]</span>. We will be
+        <p>This is the simplest possible form of depth-first search. We will be
             using it traverse this tree, constructed via the Python code on the right and represented graphically on the
             left:</p>
 
         <div class="displayTree flex">
 
             <div class="snippet line-numbers">
-                <pre class="tree-snippet"><code class="language-python">class Node(object):
+                <pre class="tree-snippet" data-line="10"><code class="language-python">class Node(object):
   def __init__(self, data, left=None, right=None):
     self.value = data
     self.left = left 
@@ -363,24 +362,18 @@ dfs(root)</code></pre>
 
         <h2>Visualizing Code Execution</h2>
         <p>
-            The visualization we will be working with shows a visual representation of the effect of executing every
-            line of
-            code in our simple depth-first search example. Let's
-            quickly familiarize ourselves with how that works by walking through the code used to construct the tree we
-            will be traversing. Use the slider or the prev/next buttons
-            to execute each line - note the variables that show up in the panel to the right of the code snippet after
+            Let's quickly familiarize ourselves with the style of visualization we will be working with.
+            Use the slider or the prev/next buttons
+            to execute each line. Note the variables that show up in the panel to the right of the code snippet after
             each line of code completes, and how they map to the various nodes in the tree diagram.
 
-            Executing each step of this visualization brings us to line 14, in which we are about to make our to call
+            Executing each step brings us to line 14, in which we are about to make our first call to
             <code>dfs(root)</code>.
-        </p>
 
-        <p>Let's see what happens.
-        </p>
 
         <div class="dfs-tree-animation">
             <div class="flex snippet line-numbers" id="animated-dfs">
-                <pre class="animated-tree-snippet" data-line="7"><code class="language-python">class Node(object):
+                <pre class="animated-tree-snippet" data-line=7><code class="language-python">class Node(object):
   def __init__(self, data, left=None, right=None):
     self.value = data
     self.left = left 
@@ -397,27 +390,27 @@ dfs(root)</code></pre>
                 <div class="variables">
                     <table class="variable-grid">
                         <tbody>
-                            <tr id="variable-row-ten" class="variable-row">
+                            <tr id="variable-row-ten" class="variable-row hidden">
                                 <td class="first-cell">ten</td>
                                 <td class="root-cell"></td>
                             </tr>
-                            <tr id="variable-row-eight" class="variable-row">
+                            <tr id="variable-row-eight" class="variable-row hidden">
                                 <td class="first-cell">eight</td>
                                 <td class="root-cell"></td>
                             </tr>
-                            <tr id="variable-row-nine" class="variable-row">
+                            <tr id="variable-row-nine" class="variable-row hidden">
                                 <td class="first-cell">nine</td>
                                 <td class="root-cell"></td>
                             </tr>
-                            <tr id="variable-row-six" class="variable-row">
+                            <tr id="variable-row-six" class="variable-row hidden">
                                 <td class="first-cell">six</td>
                                 <td class="root-cell"></td>
                             </tr>
-                            <tr id="variable-row-twelve" class="variable-row">
+                            <tr id="variable-row-twelve" class="variable-row hidden">
                                 <td class="first-cell">twelve</td>
                                 <td class="root-cell"></td>
                             </tr>
-                            <tr id="variable-row-root" class="variable-row">
+                            <tr id="variable-row-root" class="variable-row hidden">
                                 <td class="first-cell">root</td>
                                 <td class="root-cell"></td>
                             </tr>
@@ -699,69 +692,124 @@ dfs(root)</code></pre>
             <button id="prevTreeNode" onclick="prevTreeNode()" disabled="true">&lt;</button>
             <input type="range" min="0" max="6" value="0" class="slider" id="tree-animation-progress">
             <button id="nextTreeNode" onclick="nextTreeNode()">></button>
-            <div id="tree-step">Step 0 out of 6</div>
+            <div id="tree-step" class="ml3">Step 0 out of 6</div>
         </div>
 
         <h2>The Rules of Recursive Flow Control</h2>
 
-        <h3>Concept 1: Frame Creation</h3>
+        <h3>Frame Creation</h3>
+
+        <div id="animation-container-0" class="animation-container"></div>
 
         <p>
             We start our visualization by creating a <b>frame</b> to represent the first call to <code>dfs(node)</code>.
-            A frame displays the current line of code being executed and the values of any local variables within a
-            function call - we will create a new frame for each recursive call made during depth-first search.
-            Execution within this frame reaches line 5, where we encounter our first recursive call to
+            A frame displays the current line of code being executed and the values of any local variables within that
+            call (displayed in the panel to the right of the code). Execution within this frame reaches line 5, where we
+            encounter our first recursive call to
             <code>dfs(node.left)</code>.
         </p>
         <p>
-            To represent this recursive call, we <b>create a new frame and push it to the top of the call stack</b>.
+            To execute this recursive call, we <b>create a new frame and push it to the top of the call stack</b>.
             The call stack is a <a href="https://www.programiz.com/dsa/stack">stack data structure</a> containing all
-            frames which have not finished executing. The newly created frame becomes the <b>active</b> frame (green border), indicating this
+            frames which have not finished executing. The newly created frame becomes the <b>active</b> frame (green
+            border), indicating this
             frame is the only frame in our call stack which is actively executing instructions. The previously active
             frame turns grey to indicate
             that it is “suspended“ - i.e. it is waiting for the recursive call it made
             to <code>dfs(node.left)</code> on line 5 to complete before it can continue executing.
         </p>
 
-        <div id="animation-container-0" class="animation-container"></div>
+        <div id="animation-container-1" class="animation-container"></div>
 
-        <p>Step 0-2: Just as before, execution within the new active frame continues until line 5.</p>
+        <p>Just as before, execution within the new active frame continues until line 5, which is another recursive call
+            to <code>dfs(root.left)</code>. To execute this recursive call, we create a new
+            frame, push it to the top of the call stack, and make it active.
 
-        <p>Step 3: Line 5 is a recursive call to dfs(root.left). Executing the recursive call requires creating a new
-            frame, pushing it to the top of the call stack, and making it active.</p>
-
-        <p>
-            Step 4-5: Execution begins in this newly created frame, and since the value of root is None, we reach our
+            Execution starts in this newly created frame, and since the value of <code>node</code> is None, we reach our
             first return statement.
 
         </p>
-        <div id="animation-container-1" class="animation-container"></div>
 
-        <p>Step 0: This return statement completes the execution of the frame, so we pop the frame from the call stack.
-            This causes the next frame in the call stack - the frame immediately beneath the popped frame in our visual
-            $^1$ - to become active again.</p>
-
-        <p>
-            From the perspective of this newly active frame, the recursive call on line 5 now has a concrete value -
-            namely, the value returned by the frame that was just popped from the call stack. In our simple Depth First
-            Search, the value of this statement is None, but as the problems become more complex, the return statements
-            in each frame will contain actual values that are critical to our solution. Now, the newly active frame,
-            having received the value it was waiting for, continues executing.
-        </p>
+        <h3>Return Statements: Popping Frames off the Call Stack</h3>
 
         <div id="animation-container-2" class="animation-container"></div>
 
+        <p>The return statement is the last line of code to execute within the frame, so we pop the frame off the call
+            stack.
+            This causes the next frame in the call stack - the frame immediately beneath the popped frame in our visual,
+            or the frame
+            associated with the node 10 - to become active again.</p>
+
+        <p>
+            From the perspective of this newly active frame, the recursive call on line 5 now has a concrete value -
+            namely, the value returned by the frame that was just popped. In our simple depth-first
+            search, this value is None, but as the problems become more complex, the return statements
+            in each frame will contain actual values that are critical to our solution. Now, the newly active frame,
+            having received the value it was waiting for, continues executing. The next line of code it executes is a
+            recursive call to <code>dfs(node.right)</code>,
+            so we create a new frame, push it to the top of the call stack, and make it active.
+        </p>
+
+        <div id="animation-container-3" class="animation-container"></div>
+
+        <p>
+            The value of root is None within this new frame, so we reach the return statement on line 3. We pop the
+            current frame from the call stack and the next frame in the call stack becomes the new active frame.
+
+            There are no more lines of code to execute in the new active frame, which means it has completed executing.
+            The frame is popped off the call stack, and the next frame in the call stack becomes the new active frame.
+        </p>
+
+        <p>
+            Let's take a second to relate the state of our call stack back to depth-first search. At this point, the
+            only frame in the call stack is the frame associated with the root of our tree. Within that frame, line 5
+            has just finished executing, which means we have finished searching the root's entire left subtree. With
+            that done, we can move onto line 6, which won't complete until we search the root's entire right
+            subtre using the same rules for recursive control used to search the root's left
+            subtree.
+        </p>
+
+        <p>
+            To recap, those rules are:
+        <ol>
+            <li>Whenever the active frame encounters a recursive call, a new frame is created, pushed to the top of
+                the call stack, and becomes the new actively executing frame. Execution within the previous frame is
+                suspended.
+            </li>
+            <li>Whenever the active frame encounters a return statement (or there are no more lines of code to
+                execute),
+                that frame is popped off the stack. The frame's return value (if any) is sent to the next frame in the
+                call
+                stack. This next frame in the call stack becomes the active frame, and execution resumes within it.</li>
+        </ol>
+
+        The animation shows the steps for searching the root's entire right subtree. See if you can recognize when to
+        apply the two rules
+        above.
+        </p>
+
+        <div id="animation-container-4" class="animation-container"></div>
+
+        <p>
+            Those two rules for recursive control flow are foundational - the techniques we are about to learn for
+            solving recursive binary tree problems are based on the values we pass when pushing new frames onto the call
+            stack, and the values we return when popping frames from the call stack.
+
+        </p>
 
 </body>
 
 <script>
 
     $(document).ready(function () {
+        Prism.plugins.lineHighlight.highlightLines($('.animated-tree-snippet')[0])();
         $('#tree-animation-progress').on("input", advanceTreeNode);
 
         renderAnimation($("#animation-container-0"), 1, 5);
         renderAnimation($("#animation-container-1"), 5, 9);
-        renderAnimation($("#animation-container-2"), 9, 12);
+        renderAnimation($("#animation-container-2"), 9, 13);
+        renderAnimation($("#animation-container-3"), 13, 17);
+        renderAnimation($("#animation-container-4"), 17, steps.length, 450);
     });
 </script>
 
