@@ -7,7 +7,8 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-p, ol {
+p,
+ol {
     line-height: 1.6;
 }
 
@@ -15,8 +16,11 @@ h2 {
     margin-top: 2em;
 }
 
-.container p, .container ol {
-    width: 80%;
+@media (min-width: 640px) {
+    .container p,
+    .container ol {
+        width: 80%;
+    }
 }
 
 .note {
@@ -51,7 +55,8 @@ h2 {
     margin-top: 30px;
 }
 
-#tree-animation-graph .node, #tree-animation-graph .edge {
+#tree-animation-graph .node,
+#tree-animation-graph .edge {
     visibility: hidden;
 }
 
