@@ -12,7 +12,7 @@
   } 
 } */
 
-@media screen and (min-width:480px) {
+@media screen and (min-width:1080px) {
   .animation-container {
       width: 85%;
   }
