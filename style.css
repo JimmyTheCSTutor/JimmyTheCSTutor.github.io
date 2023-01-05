@@ -89,6 +89,7 @@ img.profile {
 .about-text {
 	font-family: 'Playfair Display', serif;
 	color: #1c1c1c;
+	font-size: 1.15rem;
 }
 
 .ba {
@@ -106,4 +107,8 @@ img.profile {
 
 .line-highlight {
 	background: linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0))
+}
+
+.name {
+	font-size: 1.75rem;
 }

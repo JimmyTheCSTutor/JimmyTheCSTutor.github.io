@@ -11,10 +11,13 @@
 
 		gtag('config', 'G-YTW9Q7E8GS');
 	</script>
+	<script src="https://cdn.jsdelivr.net/npm/glider-js@1/glider.min.js"></script>
 	<meta charset="utf-8">
 	<meta name="description" content="Learning how to code is hard. I want to help.">
 	<title>CS Tutoring with Jimmy</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glider-js@1/glider.min.css">
+
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
@@ -44,27 +47,26 @@
 
 		<div class="about-section center mw-max-width">
 
-			<div class="about-section-container ph4 pb5">
+			<div class="about-section-container ph4 pb4">
 				<div class="profile-container">
 					<img class="profile relative" src="images/headshot.png" />
 				</div>
 				<div class="about-text mt4-l mt1">
-					<div class="f2-l f3 pb3 fw6">Hi! My name is Jimmy.</div>
-					<div class="f5 f4-l lh-copy pb3">I'm an ex-LinkedIn software engineer turned computer science tutor.
+					<div class="name pb3 fw6">Hi! My name is Jimmy.</div>
+					<div class=" lh-copy pb3">I'm an ex-LinkedIn software engineer turned computer science tutor.
 					</div>
 
-
-					<div class="f5 f4-l lh-copy pb3">
+					<div class=" lh-copy pb3">
 						I create <a class="link underline blue" href="recursion.html">visuals and animations</a> to
 						teach important concepts. My students then work directly with those creations to deepen their
 						understanding.
 					</div>
 
-					<div class="f5 f4-l lh-copy pb3">
+					<div class=" lh-copy pb3">
 						If you like what you just read, click below to a schedule a time to:
 					</div>
 
-					<button class="mt3 white b pv2 ph3 bg-blue dim bn br2 hover-shadow-inner pointer">
+					<button class="white b pv2 ph3 bg-blue dim bn br2 hover-shadow-inner pointer">
 						<a class="white no-underline"
 							href="https://calendly.com/jimmycstutoring/tutoring?month=2022-06">
 							Meet with me
@@ -77,12 +79,58 @@
 			<div class="bt b--light-silver w-80 mw-max-width center"></div>
 
 			<div class="ph4 about-section about-text mw-max-width center">
-				<div class="center f2-l f3 pt3 pb3 fw6 tc">Testimonials</div>
+				<h1 class="center pt2 w6 tc">What my clients say</h1>
+
+				<div class="glider-contain w-80 tc i">
+					<div class="glider">
+						<div>
+							<p class="center tc i lh-copy ph2">
+								Working with Jimmy as my tutor has been an absolute pleasure! He is very knowledgeable
+								on
+								the subject matter. Jimmy is friendly, passionate, and he genuinely cares about his
+								student's success.
+
+								The tutoring sessions are deep and engaging, Jimmy gives detalied explantions, along
+								with
+								pictures to hammer down Computer Science concepts...I highly recommend Jimmy if you want
+								to
+								understand Computer Science and programming. He is the "Coding whisperer" with respect
+								to
+								Computer Science and programming. I am very happy to come across Jimmy.
+							</p>
+
+							<p class="b">- Jay P., College Senior</p>
+						</div>
+						<div>your content here</div>
+						<div>your content here</div>
+						<div>your content here</div>
+					</div>
+
+					<button aria-label="Previous" class="glider-prev">«</button>
+					<button aria-label="Next" class="glider-next">»</button>
+					<div role="tablist" class="dots"></div>
+				</div>
+
 
 
 			</div>
 
 		</div>
 </body>
+
+<script>
+	window.addEventListener('load', function () {
+		new Glider(document.querySelector('.glider'), {
+			slidesToShow: 1,
+			// slidesToScroll: 5,
+			// draggable: true,
+			dots: '.dots',
+			arrows: {
+				prev: '.glider-prev',
+				next: '.glider-next'
+			}
+		});
+	});
+</script>
 
 </html>
