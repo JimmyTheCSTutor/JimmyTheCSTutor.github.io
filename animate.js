@@ -279,9 +279,9 @@ const renderAnimation = function (animationContainer, start, end, height=300) {
             <div class="flex items-center">
                 <button class="play">Play</button>
                 <div class="mh3 slider-container flex items-center">
-                    <button class="step" id="prev" disabled=${scope.stepIdx === 0}><</button>
+                    <button class="step" id="prev" disabled=${scope.stepIdx === 0}>«</button>
                     <input type="range" min="0" max=${toExecute.length} value="0" class="slider pointer" id="progress">
-                    <button class="step" id="next">></button>
+                    <button class="step" id="next">»</button>
                 </div>
                 <div id="step">Step 0 out of ${toExecute.length}</div>
                 <button class="mr3 reset ml-auto">Reset</button>
