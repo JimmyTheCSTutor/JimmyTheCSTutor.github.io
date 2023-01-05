@@ -27,7 +27,7 @@
 <body>
     <div class="container">
         <h1>Part I: Visualizing Recursion</h1>
-        <p>The ability to solve interview questions involving recursion starts with a strong understanding of recursive
+        <p>The ability to solve interview questions involving recursion starts with understanding recursive
             control flow.
             Control flow refers to the sequence of instructions taken by a program as it executes. Understanding the
             control flow of recursive functions is challenging
@@ -40,7 +40,8 @@
         <p>
             The rules we are about to learn about recursive control flow apply to all problems involving recursion,
             but we will learn about them exclusively in the context of depth-first search and binary trees.
-            <a href="https://en.wikipedia.org/wiki/Depth-first_search">Depth-first search</a> is a recursive algorithm that systematically visits every node in a tree. Interview
+            <a href="https://en.wikipedia.org/wiki/Depth-first_search">Depth-first search</a> is a recursive algorithm
+            that systematically visits every node in a tree. Interview
             problems involving recursion and binary trees almost always require extending depth-first search in some
             fashion. The version of depth-first search we will be working with in this visualization is below:
         </p>
@@ -55,7 +56,8 @@
           </pre>
         </div>
         <p>This is the simplest possible form of depth-first search. We will be
-            using it to traverse the tree constructed via the Python code on the right and represented graphically on the
+            using it to traverse the tree constructed via the Python code on the right and represented graphically on
+            the
             left:</p>
 
         <div class="displayTree flex justify-between">
@@ -700,7 +702,8 @@ dfs(root)</code></pre>
 
         <p>
             We start our visualization by creating a <b>frame</b> to represent the first call to <code>dfs(node)</code>.
-            A frame maps to the execution of a single function call. It displays the current line of code being executed and the values of any local variables within that
+            A frame maps to the execution of a single function call. It displays the current line of code being executed
+            and the values of any local variables within that
             call. Execution within this frame reaches line 5, where we
             encounter our first recursive call to
             <code>dfs(node.left)</code>.
@@ -782,9 +785,10 @@ dfs(root)</code></pre>
         </p>
 
         <p>
-        The animation shows the steps for searching the root's entire right subtree. See if you can recognize when to
-        apply the two rules
-        above.
+            The animation shows the steps for searching the root's entire right subtree. See if you can recognize when
+            to
+            apply the two rules
+            above.
         </p>
 
         <div id="animation-container-4" class="animation-container"></div>
