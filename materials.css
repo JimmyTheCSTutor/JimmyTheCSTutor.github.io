@@ -25,6 +25,7 @@
 
 .line-highlight {
   background: #429c38aa;
+  margin-top: .8em;
 }
 
 .line-highlight.inactive {
